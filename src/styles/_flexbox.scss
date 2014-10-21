@@ -14,13 +14,25 @@
 }
 
 .flex-item {
+  position: relative;
   background: #3594CB;
   padding: 5px;
   width: 200px;
   height: 150px;
   margin-top: 10px;
 
+  border: 15px solid #3594CB;
+  border-top: 25px solid #3594CB;
   color: white;
   font-weight: bold;
   text-align: center;
+  box-sizing: padding-box;
+}
+
+.flex-item > span {
+  position: absolute;
+  top: -20px;
+  left: 0;
+  right: 0;
+  margin: auto;
 }

@@ -35,13 +35,13 @@ var MiniMap = React.createClass({
     	var edges = this.state.edges;
 
 		if (edges.length) {
-	    	var radius = 3;
+	    	var radius = 5;
 			nodeElems = this.state.nodes.map(function(v) {
 				if (Math.abs(v.x) > minScale)
 					minScale = Math.abs(v.x);
 				if (Math.abs(v.y) > minScale)
 					minScale = Math.abs(v.y);
-				return <circle cx={v.x} cy={v.y} r={radius} fill={"hsla("+202+", 9%, 50%, 1)"}
+				return <circle cx={v.x} cy={v.y} r={radius} fill={"hsla("+202+", 9%, 100%, 1)"}
 							className="node-circle"></circle>
 			});
 
@@ -60,9 +60,9 @@ var MiniMap = React.createClass({
 						);
 				}
 			}
-			minScale += radius*2;
+			minScale += radius * 2;
 			minScale *= 2;
-			minScale = Math.max(this.props.framewidth, this.props.frameheight) / minScale;
+			minScale = Math.max(0.3, Math.min(this.props.framewidth, this.props.frameheight) / minScale);
 		}
 		// minScale += 20;
 
