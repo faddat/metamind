@@ -4,7 +4,7 @@
 
 'use strict';
 
-var React = require('react');
+var Reflux = require('reflux');
 
 /**
 
@@ -60,10 +60,13 @@ var LocalStorageLoader = {
 };
 
 var MapFrame = React.createClass({
+    mixins: [Reflux.ListenerMixin],
 	displayName: 'MapFrame',
+	v: 0,
 
 	getInitialState: function() {
 		return {
+			data: {},
 			nodes: [],
 			edges: [],
 			selected: -1,
@@ -79,151 +82,57 @@ var MapFrame = React.createClass({
 		this.fn = this.genFn();
 
 
-		if (this.props.id) {
-			var loadedState = LocalStorageLoader.load(this.props.id);
-			if (!loadedState) {
-				this.createNode(0, 0, 'Mind Map');
-			} else {
-				this.setState(loadedState);
-			}
-		}
+		// if (this.props.id) {
+		// 	var loadedState = LocalStorageLoader.load(this.props.id);
+		// 	if (!loadedState) {
+		// 		this.createNode(0, 0, 'Mind Map');
+		// 	} else {
+		// 		this.setState(loadedState);
+		// 	}
+		// }
+
+		this.listenTo(Action.docReady, this.onDocReady);
+		this.listenTo(Action.docChanged, this.onDocChanged);
 	},
 
-	componentDidUpdate: function(prevProps, prevState) {
-		localStorage.setItem(this.props.id, JSON.stringify(this.state));
+	onDocReady: function() {
+		this.createNode(0, 0, 'Mind Map');
 	},
 
-	componentDidMount: function() {
-		KeyMap.bind(this.fn);
-
-		this.selectMode(0);
-
-		$('.nodeframe').panzoom({
-			$set: $('.edgepanframe>g, .nodepanframe')
-		});
-
-		var $frame = $(this.refs.nodeframe.getDOMNode());
-
+	onDocChanged: function(data) {
 		this.setState({
-			framewidth: $frame.width(),
-			frameheight: $frame.height()
-		});
-		window.addEventListener('resize', this.resize, false);
-	},
-
-	fn: {},
-
-	genFn: function() {
-		return {
-			editMode: this.editMode,
-			selectMode: this.selectMode,
-			isSelectMode: this.isSelectMode,
-			isEditMode: this.isEditMode,
-			branchNode: this.branchNode,
-			setDebugText: this.setDebugText,
-			handleTextSubmit: this.handleTextSubmit
-		};
-	},
-
-	newMap: function() {
-		this.props.newMap();
-	},
-
-	/* Select a node */
-	selectMode: function(index) {
-		if (typeof index === 'undefined')
-			index = this.state.selected;
-		this.setDebugText(0, 'Select Mode');
-		this.setDebugText(2, 'Selected: ' + index);
-		this.refs.inputBox.setText(this.state.nodes[index].text);
-		this.setState({selected: index, inputMode: 'select'});
-	},
-
-	isSelectMode: function() {
-		return this.state.selected > -1 && this.state.inputMode == 'select';
-	},
-
-	/* EditSelect a node */
-	editMode: function(index) {
-		if (typeof index === 'undefined')
-			index = this.state.selected;
-		this.setDebugText(0, 'Edit Mode');
-		this.setDebugText(2, 'Selected' + index);
-		this.refs.inputBox.focus();
-
-		this.refs.inputBox.setText(this.state.nodes[index].text);
-		this.setState({selected: index, inputMode: 'edit'});
-	},
-
-	isEditMode: function() {
-		return this.state.selected > -1 && this.state.inputMode == 'edit';
-	},
-
-	freeMode: function() {
-		this.setState({selected: -1});
-	},
-
-	isFreeMode: function() {
-		return this.state.selected === -1;
-	},
-
-	/* Create a new node linked to the Selected node */
-	branchNode: function(ev) {
-		if (this.isFreeMode()) {
-			return false;
-		}
-
-		this.createNode(0, 0, '');
-		this.linkNode(this.state.nodes.length - 1);
-		this.editMode(this.state.nodes.length - 1)
-		this.recalcNodes();
-		ev.preventDefault();
-	},
-
-	/* Change the selected node's text */
-	setNodeText: function(index, text) {
-		var nodes = this.state.nodes;
-		nodes[index].text = text;
-		this.setState({
-			nodes: nodes
+			data: data
 		});
 	},
 
-	handleTextSubmit: function() {
-
-		if (this.isEditMode()) {
-			this.setNodeText(this.state.selected, this.refs.inputBox.getText());
-			this.selectMode();
-		} else {
-			this.editMode();
-		}
+	createNode: function(text) {
+		Store.mapdata.newNode({
+			text: text
+		});
 	},
 
-	handleClick: function(e) {
-
-		if (!this.isFreeMode()) {
-			this.freeMode();
-			return;
-		}
-		//this.createNode(e.clientX - $('#app').offset().left , e.clientY - $('#app').offset().top, '');
+	createEdge: function(a, b) {
+		Store.mapdata.newEdge({
+			a: a,
+			b: b
+		});
 	},
 
-	createNode: function(x, y, text) {
+	onCreateNode: function(node) {
 		var nodes = this.state.nodes;
 		var edges = this.state.edges;
 		var len = nodes.length;
-
 		nodes.push({
 			index: len,
-			x: x,
-			y: y,
 			parent_w: 0,
 			parent_t: 0,
 			weight: 0,
 			text: text ? text : nodes.length
 		});
 
+
 		edges.push([]);
+
 
 		this.setState({
 			nodes: nodes,
@@ -239,9 +148,9 @@ var MapFrame = React.createClass({
 		nodes[edges[origin][b].next].prevIndex = a;
 	},
 
+
 	/* Link the current node to another node */
-	linkNode: function(childIndex) {
-		var originIndex = this.state.selected;
+	onCreateEdge: function() {
 		var nodes = this.state.nodes;
 		var edges = this.state.edges;
 
@@ -372,7 +281,7 @@ var MapFrame = React.createClass({
 				tw += push;
 			}
 
-			nodes[i].text = tw;
+			//nodes[i].text = tw;
 
 			t = nodes[i].parent_t - 0.5 + (push / 2) / tw;
 
@@ -390,7 +299,7 @@ var MapFrame = React.createClass({
 
 			t = nodes[i].parent_t + 0.5;
 			for (var j = smlen - 1; j >= 0; j--) {
-				nodes[smallEdges[j].next].text = "--";
+				//nodes[smallEdges[j].next].text = "--";
 				w = smallEdges[j].totalweight;
 				r = 1 / smlen;
 				var dist = distance*3;
@@ -405,6 +314,123 @@ var MapFrame = React.createClass({
 			nodes: nodes
 		})
 	},
+
+
+	componentDidUpdate: function(prevProps, prevState) {
+		// localStorage.setItem(this.props.id, JSON.stringify(this.state));
+	},
+
+	componentDidMount: function() {
+		KeyMap.bind(this.fn);
+
+		this.selectMode(0);
+
+		$('.nodeframe').panzoom({
+			$set: $('.edgepanframe>g, .nodepanframe')
+		});
+
+		var $frame = $(this.refs.nodeframe.getDOMNode());
+
+		this.setState({
+			framewidth: $frame.width(),
+			frameheight: $frame.height()
+		});
+		window.addEventListener('resize', this.resize, false);
+	},
+
+	fn: {},
+
+	genFn: function() {
+		return {
+			editMode: this.editMode,
+			selectMode: this.selectMode,
+			isSelectMode: this.isSelectMode,
+			isEditMode: this.isEditMode,
+			branchNode: this.branchNode,
+			setDebugText: this.setDebugText,
+			handleTextSubmit: this.handleTextSubmit
+		};
+	},
+
+	/* Select a node */
+	selectMode: function(index) {
+		if (typeof index === 'undefined')
+			index = this.state.selected;
+		this.setDebugText(0, 'Select Mode');
+		this.setDebugText(2, 'Selected: ' + index);
+		this.refs.inputBox.setText(this.state.nodes[index].text);
+		this.setState({selected: index, inputMode: 'select'});
+	},
+
+	isSelectMode: function() {
+		return this.state.selected > -1 && this.state.inputMode == 'select';
+	},
+
+	/* EditSelect a node */
+	editMode: function(index) {
+		if (typeof index === 'undefined')
+			index = this.state.selected;
+		this.setDebugText(0, 'Edit Mode');
+		this.setDebugText(2, 'Selected' + index);
+		this.refs.inputBox.focus();
+
+		this.refs.inputBox.setText(this.state.nodes[index].text);
+		this.setState({selected: index, inputMode: 'edit'});
+	},
+
+	isEditMode: function() {
+		return this.state.selected > -1 && this.state.inputMode == 'edit';
+	},
+
+	freeMode: function() {
+		this.setState({selected: -1});
+	},
+
+	isFreeMode: function() {
+		return this.state.selected === -1;
+	},
+
+	/* Create a new node linked to the Selected node */
+	branchNode: function(ev) {
+		if (this.isFreeMode()) {
+			return false;
+		}
+
+		this.createNode(0, 0, '');
+		this.createEdge(this.state.selected, this.state.nodes.length - 1);
+		this.editMode(this.state.nodes.length - 1)
+		this.recalcNodes();
+		ev.preventDefault();
+	},
+
+	/* Change the selected node's text */
+	setNodeText: function(index, text) {
+		var nodes = this.state.nodes;
+		nodes[index].text = text;
+		this.setState({
+			nodes: nodes
+		});
+	},
+
+	handleTextSubmit: function() {
+
+		if (this.isEditMode()) {
+			this.setNodeText(this.state.selected, this.refs.inputBox.getText());
+			this.selectMode();
+		} else {
+			this.editMode();
+		}
+	},
+
+	handleClick: function(e) {
+
+		if (!this.isFreeMode()) {
+			this.freeMode();
+			return;
+		}
+		//this.createNode(e.clientX - $('#app').offset().left , e.clientY - $('#app').offset().top, '');
+	},
+
 
 	resize: function(ev) {
 		var $frame = $(this.refs.nodeframe.getDOMNode())

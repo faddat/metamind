@@ -33,18 +33,16 @@ var HomePage = React.createClass({
     });
   },
 
-  onOpenMap: function(data) {
-    console.debug(data);
+  onOpenMap: function(id) {
     this.setState({
       view: "map",
       view_data: {
-        id: data.id
+        id: id
       }
     });
   },
 
   render: function() {
-    console.debug(this.state);
     if (this.state.view == "overview")
       return (<OverMap />);
 

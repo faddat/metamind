@@ -7,6 +7,10 @@
 
 var React = require('react');
 
+var ws = new WebSocket('ws://' + window.location.host);
+window.sjsConnection = new sharejs.Connection(ws);
+sjsConnection.debug = true;
+
 global.Action = require('./actions.js');
 global.Store = require('./stores.js');
 

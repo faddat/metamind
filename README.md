@@ -14,7 +14,7 @@
 > with a server-side project similar to [ASP.NET Web Application Starter Kit](https://github.com/kriasoft/AspNet-Server-Template).
 
 [![Facebook React Starter Kit](https://dl.dropboxusercontent.com/u/16006521/Screens/facebook-react-starter-kit.png)](https://github.com/kriasoft/react-starter-kit)
-
+asdfasdf
 **Demo**: http://reactjs.kriasoft.com
 
 ### Directory Layout

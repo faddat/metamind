@@ -3,22 +3,28 @@
 
 var SocketEngine = {
 
-	socket: null,
-	board: null,
+	sjs: null,
+	mapDoc: null,
 
-	start: function(board) {
-		this.socket = io();
+	start: function() {
 
-		this.board = board;
 
-		this.socket.emit('open', board);
 
-		this.socket.on('chat message', function(msg){
-		});
+	},
+
+	openMap: function(id) {
+
+	},
+	closeMap: function() {
+
 	},
 
 	boardMessage: function(msg) {
-		this.socket.emit('board message', msg);
+		// this.socket.emit('board message', msg);
+	},
+
+	op: function(op) {
+		// this.socket.emit('op', op);
 	}
 };
 

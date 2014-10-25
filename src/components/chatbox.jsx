@@ -44,9 +44,9 @@ var ChatFrame = React.createClass({
 	},
 
 	componentWillMount: function() {
-		Net.socket.on('board message', function(data) {
+		Action.netBoardMessage((data) => {
 			this.addChat(data);
-		}.bind(this));
+		});
 	},
 	componentDidUpdate: function() {
 		$('.chat-box').timeago('refresh');
@@ -58,7 +58,7 @@ var ChatFrame = React.createClass({
 	},
 
 	componentWillUnmount: function() {
-		Net.socket.off('board message');
+		console.debug('TODO: unsubscribe netBoardMessage');
 	},
 
 	addChat: function(data) {

@@ -9,12 +9,21 @@ var Reflux = require('reflux');
 // var textUpdate = Reflux.createAction();
 
 var Actions = Reflux.createActions([
-    "openOverview",
-	"openMap",
+    'openOverview',
+	'openMap',
 
-	"refreshMaps",
-    "createMap",
-    "deleteMap"
+	'refreshMaps',
+    'createMap',
+    'deleteMap',
+
+	'newNode',
+	'newEdge',
+
+	'docReady',
+	'docChanged',
+
+	'netBoardMessage'
+
 ]);
 
 module.exports = Actions;

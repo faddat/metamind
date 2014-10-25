@@ -162,11 +162,7 @@ var OverMap = React.createClass({
 	},
 
 	openChild: function(child) {
-		console.debug(child);
-
-		Action.openMap({
-			id: child.props.map.id
-		});
+		Action.openMap(child.props.map.id);
 	},
 
 	render: function() {
