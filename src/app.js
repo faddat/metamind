@@ -7,6 +7,18 @@
 
 var React = require('react');
 
+
+
+window.hostPath = function(path) {
+	return config.apiEndpoint + path;
+};
+
+
+var ws = new WebSocket(config.socketEndpoint);
+
+window.sjsConnection = new sharejs.Connection(ws);
+sjsConnection.debug = true;
+
 global.Action = require('./actions.js');
 global.Store = require('./stores.js');
 

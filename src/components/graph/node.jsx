@@ -9,11 +9,7 @@ var React = require('react');
 var Node = React.createClass({
 
 	clickHandler: function(ev) {
-		if (this.props.selected === true && this.props.inputMode !== 'edit') {
-			this.props.fn.editMode(this.props.node.index);
-		} else {
-			this.props.fn.selectMode(this.props.node.index);
-		}
+		Action.selectNode(this.props.node.id);
 		return false;
 	},
 
@@ -35,10 +31,6 @@ var Node = React.createClass({
 			if (this.props.fn.isSelectMode())
 			{
 				classes.push('selected');
-			}
-			else if (this.props.fn.isEditMode())
-			{
-				classes.push('edit');
 			}
 		}
 

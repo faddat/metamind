@@ -10,19 +10,15 @@ var keymap = {
 
 		Mousetrap.bind(['enter'], function(e) {
 			fn.setDebugText(1, 'Enter Captured');
-
-			if (fn.isEditMode()) {
+			if (fn.isSelectMode()) {
 				fn.handleTextSubmit();
-			} else if (fn.isSelectMode()) {
-				fn.editMode();
 			}
 
 			e.preventDefault();
 		});
 
 		Mousetrap.bind(['alt+shift+n', 'alt+shift+n'], function(e) {
-			localStorage.clear();
-			document.location.reload();
+
 		});
 
 	}

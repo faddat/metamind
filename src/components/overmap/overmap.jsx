@@ -17,7 +17,7 @@ var MiniMap = React.createClass({
 		};
 	},
 	componentWillMount: function() {
-		var state = JSON.parse(localStorage.getItem(this.props.id));
+		// var state = JSON.parse(localStorage.getItem(this.props.id));
 		if (typeof state === 'undefined' || !state || typeof state.nodes === 'undefined' || state.nodes.length == 0)
 			return;
 		this.setState(state);
@@ -162,11 +162,7 @@ var OverMap = React.createClass({
 	},
 
 	openChild: function(child) {
-		console.debug(child);
-
-		Action.openMap({
-			id: child.props.map.id
-		});
+		Action.openMap(child.props.map.id);
 	},
 
 	render: function() {
