@@ -18,9 +18,12 @@ var Actions = Reflux.createActions([
 
 	'newNode',
 	'newEdge',
+	'selectNode',
+	'editNode',
 
 	'docReady',
 	'docChanged',
+	'docCreated',
 
 	'netBoardMessage'
 

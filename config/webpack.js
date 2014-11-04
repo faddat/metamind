@@ -17,7 +17,24 @@ var webpack = require('webpack');
  * a release mode, false otherwise
  * @return {object} Webpack configuration
  */
+
+
+
 module.exports = function(release) {
+
+  // Release Plugins
+  var plugins = [
+    new webpack.DefinePlugin({'config': require('./config.js')})
+  ];
+
+  if (release) {
+    plugins.push(new webpack.DefinePlugin({'process.env.NODE_ENV': '"production"'}));
+    plugins.push(new webpack.optimize.DedupePlugin());
+    plugins.push(new webpack.optimize.UglifyJsPlugin());
+    plugins.push(new webpack.optimize.OccurenceOrderPlugin());
+    plugins.push(new webpack.optimize.AggressiveMergingPlugin());
+  }
+
   return {
     entry: './src/app.js',
 
@@ -36,13 +53,7 @@ module.exports = function(release) {
       reasons: !release
     },
 
-    plugins: release ? [
-      new webpack.DefinePlugin({'process.env.NODE_ENV': '"production"'}),
-      new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.UglifyJsPlugin(),
-      new webpack.optimize.OccurenceOrderPlugin(),
-      new webpack.optimize.AggressiveMergingPlugin()
-    ] : [],
+    plugins: plugins,
 
     resolve: {
       extensions: ['', '.webpack.js', '.web.js', '.js', '.jsx']

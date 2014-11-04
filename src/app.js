@@ -7,7 +7,16 @@
 
 var React = require('react');
 
-var ws = new WebSocket('ws://' + window.location.host);
+
+
+window.hostPath = function(path) {
+	console.log('config', config);
+	return config.apiEndpoint + path;
+};
+
+
+var ws = new WebSocket(config.socketEndpoint);
+
 window.sjsConnection = new sharejs.Connection(ws);
 sjsConnection.debug = true;
 

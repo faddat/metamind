@@ -21,8 +21,7 @@ var keymap = {
 		});
 
 		Mousetrap.bind(['alt+shift+n', 'alt+shift+n'], function(e) {
-			localStorage.clear();
-			document.location.reload();
+
 		});
 
 	}

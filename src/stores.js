@@ -18,7 +18,7 @@ var Store = {
             return new Promise((resolve, reject) => {
                 $.ajax({
                     method: 'POST',
-                    url: '/maps',
+                    url: hostPath('/maps'),
                     data: JSON.stringify(map),
                     success: (response) => {
                         if (response.status == 'ok') {
@@ -43,7 +43,7 @@ var Store = {
 
         getMaps: function() {
             $.ajax({
-                url: '/maps',
+                url: hostPath('/maps'),
                 success: (data) => {
                     this.setData(data);
                 },
@@ -72,16 +72,14 @@ var Store = {
 
     mapdata: Reflux.createStore({
         doc: null,
-        docContext: null,
-        nodes: null,
-        edges: null,
-        isOpen: false,
+        i: 0,
 
         init() {
             this.listenTo(Action.openMap, this.openMap);
             this.listenTo(Action.newNode, this.newNode);
             this.listenTo(Action.newEdge, this.newEdge);
             this.listenTo(Action.docChanged, this.onDocChange);
+            // this.listenTo(Action.docCreated, this.onDocCreated);
         },
 
 
@@ -89,49 +87,75 @@ var Store = {
         openMap(id) {
             this.doc = sjsConnection.get('map', id);
             this.doc.subscribe();
+            this.doc.on('created', Action.docCreated);
+            this.doc.on('after op', (op, localSite) => {
+                this.trigger(this.doc.snapshot)
+            });
+            // this.doc.on('remote op', Action.docChanged);
+
             this.doc.whenReady(() => {
                 if (!this.doc.type) {
                     this.doc.create('json0', {
-                        nodes: [],
+                        nodes: {
+                            root: {text: 'Mind Map'}
+                        },
                         edges: []
                     });
                 }
-                console.debug('this-doc', this.doc);
-                this.docContext = this.doc.createContext();
-                this.nodes = this.docContext.createContextAt(['nodes']);
-                this.edges = this.docContext.createContextAt(['edges']);
-                this.doc.on('after op', Action.docChanged);
+
                 Action.docReady(id);
 
+                Action.docChanged(id);
             });
         },
 
         closeMap() {
-            this.nodes.destroy();
-            this.edges.destroy();
-            this.docContext.destroy();
             this.doc.unsubscribe();
         },
 
         onDocChange() {
-            console.debug('this.doc.getSnapshot()', this.doc.getSnapshot());
-            this.trigger(this.doc.getSnapshot());
-            console.debug('doc changed!');
+            console.debug('docChange');
+            this.trigger(this.doc.snapshot);
         },
 
-        newNode(node) {
-            console.debug('this.nodes', this.nodes);
-            console.debug('this.nodes.push', this.nodes.push);
-            this.nodes.push(node);
+        nextId() {
+            return sjsConnection.id + this.i++;
         },
 
-        newEdge(edge) {
-            this.doc.push('edge', edge);
+        _nodeOp(key, node) {
+            return {p:['nodes', key], oi:node};
         },
-        updateNode(index, node) {
-            this.nodes.set(index, node);
+
+        _edgeOp(edge) {
+            return {p:['edges', this.doc.snapshot.edges.length], li:edge};
+        },
+
+        _nodeUpdateOp(id, node) {
+            return {p:['nodes', id], od: this.doc.snapshot.nodes[id], oi:node};
+        },
+
+        newNode(key, node, edge) {
+            var op = [
+                this._nodeOp(key, node),
+                this._edgeOp(edge)
+            ];
+            console.log('op', op);
+            this.doc.submitOp(op);
+        },
+
+        getNode(id) {
+            return this.doc.snapshot.nodes[id];
+        },
+
+        updateNode(id, node) {
+            var op = [
+                this._nodeUpdateOp(id, node)
+            ];
+            this.doc.submitOp(op);
         }
     })
 };
+
+
 
 module.exports = Store;

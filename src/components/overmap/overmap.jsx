@@ -17,7 +17,7 @@ var MiniMap = React.createClass({
 		};
 	},
 	componentWillMount: function() {
-		var state = JSON.parse(localStorage.getItem(this.props.id));
+		// var state = JSON.parse(localStorage.getItem(this.props.id));
 		if (typeof state === 'undefined' || !state || typeof state.nodes === 'undefined' || state.nodes.length == 0)
 			return;
 		this.setState(state);
