@@ -23,16 +23,17 @@ var webpack = require('webpack');
 module.exports = function(release) {
 
   // Release Plugins
-  var plugins = [
-    new webpack.DefinePlugin({'config': require('./config.js')})
-  ];
+  var plugins = [];
 
   if (release) {
+    plugins.push(new webpack.DefinePlugin({'config': require('./config-release.js')}));
     plugins.push(new webpack.DefinePlugin({'process.env.NODE_ENV': '"production"'}));
     plugins.push(new webpack.optimize.DedupePlugin());
     plugins.push(new webpack.optimize.UglifyJsPlugin());
     plugins.push(new webpack.optimize.OccurenceOrderPlugin());
     plugins.push(new webpack.optimize.AggressiveMergingPlugin());
+  } else {
+    plugins.push(new webpack.DefinePlugin({'config': require('./config.js')}));
   }
 
   return {

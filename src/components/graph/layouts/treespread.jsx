@@ -20,7 +20,7 @@ module.exports = {
 			y: 0,
 			parent_w: 0,
 			parent_t: 0,
-			weight: 1,
+			weight: 0,
 			text: graphData.nodes['root'].text
 		});
 
@@ -47,7 +47,7 @@ module.exports = {
 			nodeIndexById[currentEdge.b] = i+1;
 			renderData.edges[nodeIndex].push({
 				next: i + 1,
-				totalweight: 1
+				totalweight: 0
 			});
 
 			//Create Render Node Skeleton
@@ -67,8 +67,8 @@ module.exports = {
 			var prev = renderData.nodes[i].prev;
 			var prevIndex = renderData.nodes[i].prevIndex;
 
-			renderData.nodes[prev].weight += renderData.nodes[i].weight;
-			renderData.edges[prev][prevIndex].totalweight += renderData.nodes[i].weight;
+			renderData.nodes[prev].weight += 1 + renderData.nodes[i].weight;
+			renderData.edges[prev][prevIndex].totalweight += 1 + renderData.nodes[i].weight;
 
 			// renderData.edges[prev] = this.scatterEdges(renderData.edges[prev], renderData.nodes[prev].parent_w - renderData.edges[prev][prevIndex].totalweight);
 
@@ -79,8 +79,6 @@ module.exports = {
 		};
 
 		this.recalcNodes(renderData.nodes, renderData.edges);
-
-		console.log('renderData', renderData);
 
 		return renderData;
 	},
@@ -177,12 +175,11 @@ module.exports = {
 				for (var j = 0; j < bigEdges.length; j++) {
 					r = (bigEdges[j].totalweight / tw) / 2;
 					t += r;
-					var dist = distance*3 + distance * Math.pow(bigEdges[j].totalweight + 10, 0.85);
+					var dist = distance*3 + distance * Math.pow(bigEdges[j].totalweight + 10, 0.55);
 					nodes[bigEdges[j].next].x = Math.cos(t * 2 * Math.PI) * (dist) + nodes[i].x;
 					nodes[bigEdges[j].next].y = Math.sin(t * 2 * Math.PI) * (dist) + nodes[i].y;
 					nodes[bigEdges[j].next].parent_t = t;
 					nodes[bigEdges[j].next].parent_w = nodes[i].weight - smlen;
-					nodes[bigEdges[j].next].text = "PW: " + nodes[bigEdges[j].next].parent_w
 					t += r;
 
 				};
@@ -193,13 +190,11 @@ module.exports = {
 				w = smallEdges[j].totalweight;
 				r = 1 / smlen;
 				var dist = distance*3;
-				console.debug('nodes[i]', nodes[i]);
 				nodes[smallEdges[j].next].x = Math.cos((t + r/2) * 2 * Math.PI) * (dist) + nodes[i].x;
 				nodes[smallEdges[j].next].y = Math.sin((t + r/2) * 2 * Math.PI) * (dist) + nodes[i].y;
 				t += r;
 			};
 		};
-		console.debug('nodes', nodes);
 	},
 
 };

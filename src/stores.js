@@ -76,13 +76,11 @@ var Store = {
 
         init() {
             this.listenTo(Action.openMap, this.openMap);
+            this.listenTo(Action.closeMap, this.closeMap);
             this.listenTo(Action.newNode, this.newNode);
             this.listenTo(Action.newEdge, this.newEdge);
             this.listenTo(Action.docChanged, this.onDocChange);
-            // this.listenTo(Action.docCreated, this.onDocCreated);
         },
-
-
 
         openMap(id) {
             this.doc = sjsConnection.get('map', id);
@@ -118,22 +116,28 @@ var Store = {
             this.trigger(this.doc.snapshot);
         },
 
+        // Generate next unique id based on user id
         nextId() {
             return sjsConnection.id + this.i++;
         },
 
+        // Build op to create a node
         _nodeOp(key, node) {
             return {p:['nodes', key], oi:node};
         },
 
+        // Build op to create an edge
         _edgeOp(edge) {
             return {p:['edges', this.doc.snapshot.edges.length], li:edge};
         },
 
+        // Build op to replace a node
         _nodeUpdateOp(id, node) {
             return {p:['nodes', id], od: this.doc.snapshot.nodes[id], oi:node};
         },
 
+        // Create a new node
+        // key as a unique string id, node as { text }, edge as { a, b }
         newNode(key, node, edge) {
             var op = [
                 this._nodeOp(key, node),
@@ -143,10 +147,13 @@ var Store = {
             this.doc.submitOp(op);
         },
 
+        // Get node by key
         getNode(id) {
             return this.doc.snapshot.nodes[id];
         },
 
+        // Update a node
+        // id is the key, node is { text }
         updateNode(id, node) {
             var op = [
                 this._nodeUpdateOp(id, node)

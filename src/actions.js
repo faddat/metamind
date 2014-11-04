@@ -11,6 +11,7 @@ var Reflux = require('reflux');
 var Actions = Reflux.createActions([
     'openOverview',
 	'openMap',
+	'closeMap',
 
 	'refreshMaps',
     'createMap',
@@ -19,11 +20,9 @@ var Actions = Reflux.createActions([
 	'newNode',
 	'newEdge',
 	'selectNode',
-	'editNode',
 
 	'docReady',
 	'docChanged',
-	'docCreated',
 
 	'netBoardMessage'
 

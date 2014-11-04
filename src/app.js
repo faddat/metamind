@@ -10,7 +10,6 @@ var React = require('react');
 
 
 window.hostPath = function(path) {
-	console.log('config', config);
 	return config.apiEndpoint + path;
 };
 

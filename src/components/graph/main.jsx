@@ -84,18 +84,16 @@ var MapFrame = React.createClass({
 	componentWillMount: function() {
 		this.fn = this.genFn();
 
-		this.listenTo(Action.docReady, this.onDocReady);
+
+		//Map Has New Data Changes
 		this.listenTo(Store.mapdata, this.onDocChanged);
-		this.listenTo(Action.docCreated, this.onDocCreated);
+
+		//Before
+		this.listenTo(Action.docReady, this.onDocReady);
 		this.listenTo(Action.selectNode, this.onSelectNode);
-		this.listenTo(Action.editNode, this.onEditNode);
 	},
 
-	onDocReady: function() {
-
-	},
-
-	onDocCreated: function() {
+	componentWillUnmount: function() {
 
 	},
 
@@ -110,26 +108,9 @@ var MapFrame = React.createClass({
 			id = this.state.selected;
 		}
 
-		this.setDebugText(0, 'Select Mode');
-		this.setDebugText(2, 'Selected: ' + id);
-
-		this.setState({selected: id, inputMode: 'select'});
-	},
-
-	onEditNode(id) {
-		if (typeof id === 'undefined') {
-			id = this.state.selected;
-		}
-
-		this.setDebugText(0, 'Edit Mode');
-		this.setDebugText(2, 'Selected' + id);
-
 		this.refs.inputBox.focus();
-
-		console.debug('id', id);
-
 		this.refs.inputBox.setText(Store.mapdata.getNode(id).text);
-		this.setState({selected: id, inputMode: 'edit'});
+		this.setState({selected: id, inputMode: 'select'});
 	},
 
 	createNode: function() {
@@ -145,7 +126,7 @@ var MapFrame = React.createClass({
 		}
 
 		var id = this.createNode();
-		Action.editNode(id);
+		Action.selectNode(id);
 		ev.preventDefault();
 	},
 
@@ -175,7 +156,6 @@ var MapFrame = React.createClass({
 	genFn: function() {
 		return {
 			isSelectMode: this.isSelectMode,
-			isEditMode: this.isEditMode,
 			branchNode: this.branchNode,
 			setDebugText: this.setDebugText,
 			handleTextSubmit: this.handleTextSubmit
@@ -184,11 +164,6 @@ var MapFrame = React.createClass({
 
 	isSelectMode: function() {
 		return this.state.selected && this.state.inputMode == 'select';
-	},
-
-
-	isEditMode: function() {
-		return this.state.selected && this.state.inputMode == 'edit';
 	},
 
 	freeMode: function() {
@@ -200,22 +175,16 @@ var MapFrame = React.createClass({
 	},
 
 	handleTextSubmit: function() {
-		if (this.isEditMode()) {
-			this.setNodeText(this.state.selected, this.refs.inputBox.getText());
-			Action.selectNode();
-		} else {
-			Action.editNode();
-		}
+		this.setNodeText(this.state.selected, this.refs.inputBox.getText());
+		Action.selectNode();
 	},
 
 	handleClick: function(e) {
-
 		if (!this.isFreeMode()) {
 			this.freeMode();
 			return;
 		}
 	},
-
 
 	resize: function(ev) {
 		var $frame = $(this.refs.nodeframe.getDOMNode())
@@ -289,7 +258,7 @@ var MapFrame = React.createClass({
         return <div ref="app" style={style}>
         	<NavBar fn={{onClick: this.newMap}} />
         	<ChatFrame />
-        	<InputBox ref="inputBox" active={this.isEditMode()} submit={this.handleTextSubmit}/>
+        	<InputBox ref="inputBox" active={this.isSelectMode()} submit={this.handleTextSubmit}/>
         	<div className="nodeframe" ref="nodeframe" onClick={this.handleClick}>
         		<div className="nodepanframe">
 	        		{nodes}

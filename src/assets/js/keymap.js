@@ -10,11 +10,8 @@ var keymap = {
 
 		Mousetrap.bind(['enter'], function(e) {
 			fn.setDebugText(1, 'Enter Captured');
-
-			if (fn.isEditMode()) {
+			if (fn.isSelectMode()) {
 				fn.handleTextSubmit();
-			} else if (fn.isSelectMode()) {
-				fn.editMode();
 			}
 
 			e.preventDefault();
