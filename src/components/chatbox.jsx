@@ -5,38 +5,51 @@
 'use strict';
 
 var React = require('react');
+var Reflux = require('reflux');
 
-var Net = require('../assets/js/collab-engine');
 
+var ChatMessage = React.createClass({
+
+				// <time className="time timeago" dateTime={(new Date(this.props.data.timestamp)).toISOString()}></time>
+				// <span className="time"></span>
+				// <span className="from"> via {this.props.data.from}</span>
+	render: function() {
+		return false;
+	}
+});
 
 var ChatObject = React.createClass({
+	propTypes: {
+		t: React.PropTypes.number
+	},
 	render: function() {
-		var content = '';
+		// switch(this.props.data.t) {
+		// 	case 1:
+		// 		content = (<div className="chat-object">
+		// 			// <img src={this.props.data.picsrc} />
+		// 			// <span className="chat-message">{this.props.data.msg}</span>
+		// 		</div>);
+		// 		break;
+		// 	case 2:
+		// 		content = (<div></div>);
+		// 		break;
+		// }
 
-		switch(this.props.data.typeid) {
-			case 1:
-				content = (<div className="chat-object">
-					<img src={this.props.data.picsrc} />
-					<span className="chat-message">{this.props.data.msg}</span>
-				</div>);
-				break;
-			case 2:
-				content = (<div></div>);
-				break;
-		}
-
-		return (<div key={this.props.id} className="chat">
-				<span className="meta">{this.props.data.title + " "}</span>
-				<time className="time timeago" dateTime={(new Date(this.props.data.timestamp)).toISOString()}></time>
-				<span className="time"></span>
-				<span className="from"> via {this.props.data.from}</span>
-				{content}
+		return (<div className="chat">
+				<span className="meta">{this.props.data.text + " "}</span>
+				{this.props.children}
 			</div>);
 	}
 });
 
 
 var ChatFrame = React.createClass({
+    mixins: [Reflux.ListenerMixin],
+
+    propTypes: {
+    	id: React.PropTypes.string
+    },
+
 	getInitialState: function() {
 		return {
 			chats: [],
@@ -44,35 +57,36 @@ var ChatFrame = React.createClass({
 	},
 
 	componentWillMount: function() {
-		Action.netBoardMessage((data) => {
-			this.addChat(data);
-		});
-	},
-	componentDidUpdate: function() {
-		$('.chat-box').timeago('refresh');
-		var box = this.refs.chatscroll.getDOMNode();
-  		box.scrollTop = box.scrollHeight;
-	},
-	componentDidMount: function() {
-		$('.chat-box').timeago();
+		Store.mapchat.openChannel(this.props.id);
+
+		this.listenTo(Store.mapchat, this.onChat);
 	},
 
 	componentWillUnmount: function() {
-		console.debug('TODO: unsubscribe netBoardMessage');
+		Store.mapchat.closeChannel();
 	},
 
-	addChat: function(data) {
-		var chats = this.state.chats;
-		chats.push(data);
-		this.setState({chats: chats});
+	componentDidUpdate: function() {
+		// $('.chat-box').timeago('refresh');
+		var box = this.refs.chatscroll.getDOMNode();
+  		box.scrollTop = box.scrollHeight;
 	},
 
-	renderChatObj: function(chat) {
+	componentDidMount: function() {
+		// $('.chat-box').timeago();
+	},
 
+	onChat(data) {
+		this.setState({
+			chats: data.chats
+		});
 	},
 
 	onSubmit: function(e) {
-		Net.boardMessage(this.refs.chatinput.getDOMNode().value);
+		Store.mapchat.create({
+			t: 0,
+			text: this.refs.chatinput.getDOMNode().value
+		});
 		this.refs.chatinput.getDOMNode().value = '';
 		e.preventDefault();
 		return false;
@@ -80,7 +94,7 @@ var ChatFrame = React.createClass({
 
 	render: function() {
 		var chats = this.state.chats.map(function(v) {
-			return (<ChatObject data={v}/>);
+			return (<ChatObject key={v.id} data={v} />);
 		});
 		return (
 			<div className="chat-box">

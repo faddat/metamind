@@ -154,7 +154,7 @@ var OverMap = React.createClass({
 
 	mapCreated: function(map) {
 		this.refs.newmap.toggle();
-		this.openMap(map.id);
+		Action.openMap(map.id);
 	},
 
 	rmChild: function(child) {

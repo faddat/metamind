@@ -44,7 +44,6 @@ var Edge = require('./edge.jsx');
 var ChatFrame = require('../chatbox.jsx');
 var Loader = require('../loader.jsx');
 var KeyMap = require('../../assets/js/keymap');
-var Net = require('../../assets/js/collab-engine');
 
 var TreeSpread = require('./layouts/treespread.jsx');
 
@@ -81,6 +80,7 @@ var MapFrame = React.createClass({
 		}
 	},
 
+
 	componentWillMount: function() {
 		this.fn = this.genFn();
 
@@ -89,8 +89,23 @@ var MapFrame = React.createClass({
 		this.listenTo(Store.mapdata, this.onDocChanged);
 
 		//Before
-		this.listenTo(Action.docReady, this.onDocReady);
 		this.listenTo(Action.selectNode, this.onSelectNode);
+	},
+
+	componentDidMount: function() {
+		KeyMap.bind(this.fn);
+
+		$('.nodeframe').panzoom({
+			$set: $('.edgepanframe>g, .nodepanframe')
+		});
+
+		var $frame = $(this.refs.nodeframe.getDOMNode());
+
+		this.setState({
+			framewidth: $frame.width(),
+			frameheight: $frame.height()
+		});
+		window.addEventListener('resize', this.resize, false);
 	},
 
 	componentWillUnmount: function() {
@@ -134,23 +149,6 @@ var MapFrame = React.createClass({
 	setNodeText: function(id, text) {
 		Store.mapdata.updateNode(id, {text: text});
 	},
-
-	componentDidMount: function() {
-		KeyMap.bind(this.fn);
-
-		$('.nodeframe').panzoom({
-			$set: $('.edgepanframe>g, .nodepanframe')
-		});
-
-		var $frame = $(this.refs.nodeframe.getDOMNode());
-
-		this.setState({
-			framewidth: $frame.width(),
-			frameheight: $frame.height()
-		});
-		window.addEventListener('resize', this.resize, false);
-	},
-
 	fn: {},
 
 	genFn: function() {
@@ -257,7 +255,7 @@ var MapFrame = React.createClass({
     	};
         return <div ref="app" style={style}>
         	<NavBar fn={{onClick: this.newMap}} />
-        	<ChatFrame />
+        	<ChatFrame id={this.props.id} />
         	<InputBox ref="inputBox" active={this.isSelectMode()} submit={this.handleTextSubmit}/>
         	<div className="nodeframe" ref="nodeframe" onClick={this.handleClick}>
         		<div className="nodepanframe">

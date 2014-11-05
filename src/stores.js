@@ -2,8 +2,6 @@
 
 // Creating a Data Store - Listening to textUpdate action
 var Reflux = require('reflux');
-var Net = require('./assets/js/collab-engine');
-
 
 
 var Store = {
@@ -77,19 +75,15 @@ var Store = {
         init() {
             this.listenTo(Action.openMap, this.openMap);
             this.listenTo(Action.closeMap, this.closeMap);
-            this.listenTo(Action.newNode, this.newNode);
-            this.listenTo(Action.newEdge, this.newEdge);
-            this.listenTo(Action.docChanged, this.onDocChange);
         },
 
         openMap(id) {
             this.doc = sjsConnection.get('map', id);
             this.doc.subscribe();
-            this.doc.on('created', Action.docCreated);
+
             this.doc.on('after op', (op, localSite) => {
-                this.trigger(this.doc.snapshot)
+                this.docChanged();
             });
-            // this.doc.on('remote op', Action.docChanged);
 
             this.doc.whenReady(() => {
                 if (!this.doc.type) {
@@ -103,7 +97,7 @@ var Store = {
 
                 Action.docReady(id);
 
-                Action.docChanged(id);
+                this.docChanged();
             });
         },
 
@@ -111,8 +105,7 @@ var Store = {
             this.doc.unsubscribe();
         },
 
-        onDocChange() {
-            console.debug('docChange');
+        docChanged() {
             this.trigger(this.doc.snapshot);
         },
 
@@ -143,7 +136,6 @@ var Store = {
                 this._nodeOp(key, node),
                 this._edgeOp(edge)
             ];
-            console.log('op', op);
             this.doc.submitOp(op);
         },
 
@@ -160,8 +152,69 @@ var Store = {
             ];
             this.doc.submitOp(op);
         }
-    })
+    }),
+
+
+    //In-Map Chat Store
+    mapchat: Reflux.createStore({
+        doc: null,
+        i: 0,
+
+        init() {
+
+        },
+
+        openChannel(id) {
+            this.doc = sjsConnection.get('mapchat', id);
+            this.doc.subscribe();
+
+            this.doc.on('after op', (op, localSite) => {
+                this.docChanged();
+            });
+
+            this.doc.whenReady(() => {
+                if (!this.doc.type) {
+                    this.doc.create('json0', {
+                        chats: [
+                        /*
+                            user
+                            message
+                        */
+                        ]
+                    });
+
+                }
+
+                Action.chatReady(id);
+                this.docChanged();
+            });
+        },
+
+        closeChannel() {
+            this.doc.unsubscribe();
+        },
+
+        docChanged() {
+            this.trigger(this.doc.snapshot);
+        },
+
+
+        // Build op to create a chat
+        _chatOp(chat) {
+            return {p:['chats', this.doc.snapshot.chats.length], li:chat};
+        },
+
+
+        // Sends a chat
+        create(chat) {
+            chat.id = sjsConnection.id + this.i++
+            this.doc.submitOp([
+                this._chatOp(chat)
+            ]);
+        },
+    }),
 };
+
 
 
 

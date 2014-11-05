@@ -17,15 +17,12 @@ var Actions = Reflux.createActions([
     'createMap',
     'deleteMap',
 
-	'newNode',
-	'newEdge',
 	'selectNode',
 
 	'docReady',
 	'docChanged',
 
-	'netBoardMessage'
-
+	'chatReady'
 ]);
 
 module.exports = Actions;

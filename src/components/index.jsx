@@ -10,7 +10,6 @@ var Reflux = require('reflux');
 var OverMap = require('./overmap/overmap.jsx');
 var MapFrame = require('./graph/main.jsx');
 
-var Net = require('../assets/js/collab-engine');
 
 var HomePage = React.createClass({
   mixins: [Reflux.ListenerMixin],
@@ -22,7 +21,6 @@ var HomePage = React.createClass({
   },
 
   componentDidMount: function() {
-    Net.start(1);
     this.listenTo(Action.openOverview, this.openOverview);
     this.listenTo(Action.openMap, this.onOpenMap);
   },
