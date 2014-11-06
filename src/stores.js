@@ -12,25 +12,25 @@ var Store = {
             this.listenTo(Action.refreshMaps, this.getMaps);
         },
 
-        createMap: function(map) {
+        createMap: function(graph) {
             return new Promise((resolve, reject) => {
                 $.ajax({
                     method: 'POST',
-                    url: hostPath('/maps'),
-                    data: JSON.stringify(map),
-                    success: (response) => {
-                        if (response.status == 'ok') {
-                            map.id = response.id;
-                            this.data.push(map);
-
-                            //Create Document with the correct ID
-                            sjsConnection.get('map', map.id, function(error, doc) {
-                                resolve(map);
-                            });
-                            this.setData(this.data);
-                        } else {
-                            reject();
+                    url: hostPath('/graphs'),
+                    data: JSON.stringify(graph),
+                    success: (res) => {
+                        if (res.error) {
+                            console.log(error);
+                            return reject(error);
                         }
+
+                        this.data.push(res.graph);
+
+                        //Create Document with the correct ID
+                        sjsConnection.get('graph', graph.id, function(error, doc) {
+                            resolve(graph);
+                        });
+                        this.setData(this.data);
                     },
                     error: reject,
                     dataType: 'json',
@@ -41,9 +41,13 @@ var Store = {
 
         getMaps: function() {
             $.ajax({
-                url: hostPath('/maps'),
-                success: (data) => {
-                    this.setData(data);
+                url: hostPath('/graphs'),
+                success: (res) => {
+                    if(res.error) {
+                        console.log('error', error);
+                        return reject(error);
+                    }
+                    this.setData(res.graphs);
                 },
                 error: () => {
                     this.setData(false);
@@ -78,7 +82,7 @@ var Store = {
         },
 
         openMap(id) {
-            this.doc = sjsConnection.get('map', id);
+            this.doc = sjsConnection.get('graph', id);
             this.doc.subscribe();
 
             this.doc.on('after op', (op, localSite) => {
