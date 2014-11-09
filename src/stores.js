@@ -5,6 +5,35 @@ var Reflux = require('reflux');
 
 
 var Store = {
+    user: Reflux.createStore({
+        user: false,
+        init() {
+            this.getUser();
+        },
+
+        getUser() {
+            if (this.user) {
+                return this.user;
+            }
+
+            $.ajax({
+                method: 'GET',
+                url: hostPath('/user'),
+                success: (res) => {
+                    console.log('res.user', res.user);
+                    this.user = res.user;
+                    this.trigger(res.user);
+                },
+                error: () => {
+                    console.log('get user fail')
+                },
+                dataType: 'json',
+                contentType: 'application/json'
+            });
+
+            return {};
+        }
+    }),
     maps: Reflux.createStore({
 
         init: function() {
@@ -211,7 +240,7 @@ var Store = {
 
         // Sends a chat
         create(chat) {
-            chat.id = sjsConnection.id + this.i++
+            chat.id = sjsConnection.id + this.i++;
             this.doc.submitOp([
                 this._chatOp(chat)
             ]);
