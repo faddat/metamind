@@ -6,7 +6,10 @@ var Reflux = require('reflux');
 
 var Store = {
     user: Reflux.createStore({
-        user: false,
+        user: {
+            email: "",
+            picsrc: ""
+        },
         init() {
             this.getUser();
         },
