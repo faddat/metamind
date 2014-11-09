@@ -11,11 +11,11 @@ var Store = {
             this.getUser();
         },
 
-        getUser() {
-            if (this.user) {
-                return this.user;
-            }
+        getDefaultData() {
+            return this.user;
+        },
 
+        getUser() {
             $.ajax({
                 method: 'GET',
                 url: hostPath('/user'),
@@ -30,8 +30,6 @@ var Store = {
                 dataType: 'json',
                 contentType: 'application/json'
             });
-
-            return {};
         }
     }),
     maps: Reflux.createStore({
@@ -197,6 +195,10 @@ var Store = {
 
         },
 
+        getDefaultData() {
+            return [];
+        },
+
         openChannel(id) {
             this.doc = sjsConnection.get('mapchat', id);
             this.doc.subscribe();
@@ -228,7 +230,7 @@ var Store = {
         },
 
         docChanged() {
-            this.trigger(this.doc.snapshot);
+            this.trigger(this.doc.snapshot.chats);
         },
 
 

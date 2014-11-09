@@ -3,8 +3,6 @@
  * @jsx React.DOM
  */
 
-'use strict';
-
 var React = require('react');
 var Reflux = require('reflux');
 var ReactStyle = require('react-style');
@@ -95,23 +93,15 @@ var input = ReactStyle({
 
 
 var ChatMessage = React.createClass({
-    mixins: [Reflux.connect(Store.user, "user")],
-
-    getInitialState: function() {
-    	return {
-    		user: Store.user.getUser()
-    	};
-    },
-
 	render: function() {
 		console.log('this.props.data', this.props.data);
 		return (<div styles={chatStyle}>
-				<span styles={chatMeta}>{this.state.user.email}</span>
+				<span styles={chatMeta}>{this.props.data.email}</span>
 				<time className="time timeago" dateTime={(new Date(this.props.data.timestamp)).toISOString()}></time>
 				<span className="time"></span>
 				<span styles={chatFrom}> via web</span>
 				<div styles={chatObjectStyle}>
-					<img src={this.state.user.picsrc} styles={chatMessageImageStyle} />
+					<img src={this.props.data.picsrc} styles={chatMessageImageStyle} />
 					<span styles={chatMessageStyle}>{this.props.data.text}</span>
 				</div>
 			</div>);
@@ -136,22 +126,25 @@ var ChatObject = React.createClass({
 
 
 var ChatFrame = React.createClass({
-    mixins: [Reflux.ListenerMixin],
+    mixins: [Reflux.connect(Store.user, "user"), Reflux.connect(Store.mapchat, "chats")],
+
+
+    getInitialState: function() {
+    	return {
+    		user: false,
+    		chats: []
+    	};
+    },
 
     propTypes: {
     	id: React.PropTypes.string
     },
 
-	getInitialState: function() {
-		return {
-			chats: [],
-		}
-	},
-
 	componentWillMount: function() {
+		console.log('ChatFrameWillMount', this.state);
 		Store.mapchat.openChannel(this.props.id);
 
-		this.listenTo(Store.mapchat, this.onChat);
+		// this.listenTo(Store.mapchat, this.onChat);
 	},
 
 	componentWillUnmount: function() {
@@ -168,17 +161,13 @@ var ChatFrame = React.createClass({
 		// $('var = .timeago( = ReactStyle(;
 	},
 
-	onChat(data) {
-		this.setState({
-			chats: data.chats
-		});
-	},
-
 	onSubmit: function(e) {
 		Store.mapchat.create({
 			t: 1,
 			text: this.refs.chatinput.getDOMNode().value,
-			timestamp: new Date()
+			timestamp: new Date(),
+			email: this.state.user.email,
+			picsrc: this.state.user.picsrc
 		});
 		this.refs.chatinput.getDOMNode().value = '';
 		e.preventDefault();
