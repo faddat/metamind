@@ -38,15 +38,15 @@ var ChatMessage = React.createClass({
 	}),
 
 	chatTime: ReactStyle({
-		opacity: '0.4'
+		opacity: 0.4
 	}),
 
 	chatFrom: ReactStyle({
-		opacity: '0.4'
+		opacity: 0.4
 	}),
 
 	chatMeta: ReactStyle({
-		fontWeight: '500'
+		fontWeight: 500
 	}),
 
 	render: function() {
@@ -110,7 +110,7 @@ var ChatFrame = React.createClass({
 	    backgroundRepeat: 'repeat-y',
 	    backgroundPosition: 'center right',
 	    backgroundSize: '1px 1px',
-	    fontSize: '13pt',
+	    fontSize: 13,
 	    zIndex: 15
 	}),
 
