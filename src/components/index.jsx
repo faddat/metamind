@@ -13,25 +13,30 @@ var MapFrame = require('./graph/main.jsx');
 
 var HomePage = React.createClass({
   mixins: [Reflux.ListenerMixin],
-  getInitialState: function() {
+  getInitialState() {
     return {
       view: "landing",
       view_data: {}
     };
   },
 
-  componentDidMount: function() {
+  componentDidMount() {
     this.listenTo(Action.openOverview, this.openOverview);
     this.listenTo(Action.openMap, this.onOpenMap);
+    this.listenTo(Action.authFail, this.onAuthFail);
   },
 
-  openOverview: function() {
+  onAuthFail() {
+    document.location.href = '/';
+  },
+
+  openOverview() {
     this.setState({
       view: "overview"
     });
   },
 
-  onOpenMap: function(id) {
+  onOpenMap(id) {
     this.setState({
       view: "map",
       view_data: {
@@ -40,7 +45,7 @@ var HomePage = React.createClass({
     });
   },
 
-  render: function() {
+  render() {
     if (this.state.view == "overview")
       return (<OverMap />);
 

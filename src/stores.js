@@ -3,19 +3,28 @@
 // Creating a Data Store - Listening to textUpdate action
 var Reflux = require('reflux');
 
+function handleApiError(xhr, status, err) {
+    console.log('xhr, status, err', xhr, status, err);
+    if (err === 'Unauthorized') {
+        Action.authFail();
+        return;
+    }
+};
 
 var Store = {
-    user: Reflux.createStore({
-        user: {
-            email: "",
-            picsrc: ""
+    appdata: Reflux.createStore({
+        appdata: {
+            user: {
+                email: "",
+                picsrc: ""
+            }
         },
         init() {
             this.getUser();
         },
 
         getDefaultData() {
-            return this.user;
+            return this.appdata;
         },
 
         getUser() {
@@ -23,11 +32,11 @@ var Store = {
                 method: 'GET',
                 url: hostPath('/user'),
                 success: (res) => {
-                    console.log('res.user', res.user);
-                    this.user = res.user;
-                    this.trigger(res.user);
+                    this.appdata.user = res.user;
+                    this.trigger(res.appdata);
                 },
-                error: () => {
+                error: (a, b, c, d) => {
+                    handleApiError(a, b, c, d);
                     console.log('get user fail')
                 },
                 dataType: 'json',
@@ -36,6 +45,11 @@ var Store = {
         }
     }),
     maps: Reflux.createStore({
+
+
+        getDefaultData() {
+            return [];
+        },
 
         init: function() {
             this.listenTo(Action.createMap, this.createMap);
@@ -77,29 +91,15 @@ var Store = {
                         console.log('error', error);
                         return reject(error);
                     }
-                    this.setData(res.graphs);
+                    this.trigger(res.graphs);
                 },
-                error: () => {
-                    this.setData(false);
+                error: (xhr, status, err) => {
+                    handleApiError(xhr, status, err);
                 },
                 dataType: 'json',
                 contentType: 'application/json'
             });
         },
-
-        setData: function(data) {
-            if (data) {
-                this.status = 'success';
-                this.data = data;
-            } else {
-                this.status = 'fail';
-            }
-
-            this.trigger({
-                status: this.status,
-                data: this.data
-            });
-        }
     }),
 
     mapdata: Reflux.createStore({
@@ -250,6 +250,61 @@ var Store = {
                 this._chatOp(chat)
             ]);
         },
+    }),
+
+    //In-Map Chat Store
+    chatusers: Reflux.createStore({
+        doc: null,
+
+        init() {
+
+        },
+
+        getDefaultData() {
+            return [];
+        },
+
+        openChannel(id) {
+            this.doc = sjsConnection.get('chatusers', id);
+            this.doc.subscribe();
+
+            this.doc.on('after op', (op, localSite) => {
+                this.docChanged();
+            });
+
+            this.doc.whenReady(() => {
+                if (!this.doc.type) {
+                    this.doc.create('json0', {
+                        users: []
+                    });
+                }
+
+                this.docChanged();
+            });
+        },
+
+        closeChannel() {
+            this.doc.unsubscribe();
+        },
+
+        docChanged() {
+            this.trigger(this.doc.snapshot.users);
+        },
+
+
+        // // Build op to create a chat
+        // _chatOp(chat) {
+        //     return {p:['chats', this.doc.snapshot.chats.length], li:chat};
+        // },
+
+
+        // // Sends a chat
+        // create(chat) {
+        //     chat.id = sjsConnection.id + this.i++;
+        //     this.doc.submitOp([
+        //         this._chatOp(chat)
+        //     ]);
+        // },
     }),
 };
 

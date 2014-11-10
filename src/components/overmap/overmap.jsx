@@ -84,6 +84,7 @@ var MiniMap = React.createClass({
 
 
 var OverMapNode = React.createClass({
+
 	getInitialState: function() {
 		return {
 			width: 50,
@@ -128,27 +129,16 @@ var OverMapNode = React.createClass({
 });
 
 var OverMap = React.createClass({
-    mixins: [Reflux.ListenerMixin],
+    mixins: [Reflux.connect(Store.maps, "graphs")],
 	gridster: null,
 
 	getInitialState: function() {
 		return {
-			maps: []
+			graphs: []
 		};
 	},
 
 	componentDidMount: function() {
-		this.listenTo(Store.maps, this.onMapsChange);
-		this.refreshMaps();
-	},
-
-	onMapsChange: function(maps) {
-        this.setState({
-        	maps: maps.data
-        });
-	},
-
-	refreshMaps: function() {
 		Action.refreshMaps();
 	},
 
@@ -167,10 +157,10 @@ var OverMap = React.createClass({
 
 	render: function() {
 		var self = this;
-		var maps = this.state.maps.map(function(v) {
+		var graphs = _.map(this.state.graphs, function(graph) {
 			return <OverMapNode
-						key={v.id}
-						map={v}
+						key={graph.id}
+						map={graph}
 						onClick={self.openChild} />
 		});
 
@@ -187,7 +177,7 @@ var OverMap = React.createClass({
 					<span className="clear-me"></span>
 				</header>
 				<div className="flex-container">
-					{maps}
+					{graphs}
 					<span className="clear-me"></span>
 				</div>
 			</div>

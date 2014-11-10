@@ -22,7 +22,9 @@ var Actions = Reflux.createActions([
 	'docReady',
 	'docChanged',
 
-	'chatReady'
+	'chatReady',
+
+	'authFail'
 ]);
 
 module.exports = Actions;

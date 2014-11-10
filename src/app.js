@@ -7,11 +7,14 @@
 
 var React = require('react');
 var ReactStyle = require('react-style');
+var Reflux = require('reflux');
 
 window.hostPath = function(path) {
 	return config.apiEndpoint + path;
 };
 
+
+window._ = require('underscore');
 
 var ws = new WebSocket(config.socketEndpoint);
 

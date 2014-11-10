@@ -6,7 +6,7 @@
 var React = require('react');
 var Reflux = require('reflux');
 var ReactStyle = require('react-style');
-
+var ChatUsers = require('./chatusers.jsx');
 
 var ChatMessage = React.createClass({
 
@@ -52,6 +52,7 @@ var ChatMessage = React.createClass({
 	render: function() {
 		console.log('this.props.data', this.props.data);
 		return (<div styles={this.chatStyle}>
+				<ChatUsers />
 				<span styles={this.chatMeta}>{this.props.data.email}</span>
 				<time className="time timeago" dateTime={(new Date(this.props.data.timestamp)).toISOString()}></time>
 				<span className="time"></span>
@@ -82,12 +83,12 @@ var ChatObject = React.createClass({
 
 
 var ChatFrame = React.createClass({
-    mixins: [Reflux.connect(Store.user, "user"), Reflux.connect(Store.mapchat, "chats")],
+    mixins: [Reflux.connect(Store.appdata, "appdata"), Reflux.connect(Store.mapchat, "chats")],
 
 
     getInitialState: function() {
     	return {
-    		user: false,
+    		appdata: false,
     		chats: []
     	};
     },
@@ -164,8 +165,8 @@ var ChatFrame = React.createClass({
 			t: 1,
 			text: this.refs.chatinput.getDOMNode().value,
 			timestamp: new Date(),
-			email: this.state.user.email,
-			picsrc: this.state.user.picsrc
+			email: this.state.appdata.user.email,
+			picsrc: this.state.appdata.user.picsrc
 		});
 		this.refs.chatinput.getDOMNode().value = '';
 		e.preventDefault();
@@ -178,6 +179,7 @@ var ChatFrame = React.createClass({
 		});
 		return (
 			<div styles={this.chatBoxStyle}>
+				<ChatUsers />
 				<div ref="chatscroll" styles={this.chatScrollStyle}>
 					{chats}
 				</div>

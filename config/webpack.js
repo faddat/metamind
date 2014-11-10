@@ -26,7 +26,7 @@ module.exports = function(release) {
 
   if (release) {
     plugins.push(new webpack.DefinePlugin({'config': require('./config-release.js')}));
-    plugins.push(new webpack.DefinePlugin({'process.env.NODE_ENV': '"production"'}));
+    // plugins.push(new webpack.DefinePlugin({'process.env.NODE_ENV': '"production"'}));
     plugins.push(new webpack.optimize.DedupePlugin());
     plugins.push(new webpack.optimize.UglifyJsPlugin());
     plugins.push(new webpack.optimize.OccurenceOrderPlugin());
