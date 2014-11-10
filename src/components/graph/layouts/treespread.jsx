@@ -51,16 +51,15 @@ module.exports = {
 			});
 
 			//Create Render Node Skeleton
-			renderData.nodes.push({
+			renderData.nodes.push(_.extend(graphData.nodes[graphData.edges[i].b], {
 				id: currentEdge.b,
 				index: i + 1,
 				parent_w: 0,
 				parent_t: 0,
 				weight: 0,
-				text: graphData.nodes[graphData.edges[i].b].text,
 				prev: nodeIndex,
 				prevIndex: renderData.edges[nodeIndex].length - 1
-			});
+			}));
 		};
 
 		for (var i = renderData.nodes.length - 1; i > 0; i--) {
@@ -155,11 +154,11 @@ module.exports = {
 	recalcNodes: function(nodes, edges)
 	{
 		var r, t, tw, r2, w, smallCount, push, bigEdges, smallEdges;
-		var distance = 20;
+		var distance = 70;
 
 		for (var i = 0; i < edges.length; i++) {
-			bigEdges = edges[i].filter(function(v) { return v.totalweight > 1;});
-			smallEdges = edges[i].filter(function(v) { return v.totalweight == 1;});
+			bigEdges = edges[i].filter(function(v) { return true; });//v.totalweight > 1;});
+			smallEdges = [];//edges[i].filter(function(v) { return v.totalweight == 1;});
 			var smlen = smallEdges.length;
 
 			if (bigEdges.length > 0) {
@@ -175,7 +174,7 @@ module.exports = {
 				for (var j = 0; j < bigEdges.length; j++) {
 					r = (bigEdges[j].totalweight / tw) / 2;
 					t += r;
-					var dist = distance*3 + distance * Math.pow(bigEdges[j].totalweight + 10, 0.55);
+					var dist = distance + distance * Math.pow(bigEdges[j].totalweight, 0.5);
 					nodes[bigEdges[j].next].x = Math.cos(t * 2 * Math.PI) * (dist) + nodes[i].x;
 					nodes[bigEdges[j].next].y = Math.sin(t * 2 * Math.PI) * (dist) + nodes[i].y;
 					nodes[bigEdges[j].next].parent_t = t;

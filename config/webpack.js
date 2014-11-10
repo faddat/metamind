@@ -6,7 +6,6 @@
 'use strict';
 
 var webpack = require('webpack');
-
 /**
  * Get configuration for Webpack
  *

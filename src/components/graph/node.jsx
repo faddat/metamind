@@ -22,7 +22,7 @@ var Node = React.createClass({
 			"-moz-transform": 'translate3d('+x+'px, '+y+'px, 0) translate3d(-50%, -50%, 0)',
 			"transform": 'translate3d('+x+'px, '+y+'px, 0) translate3d(-50%, -50%, 0)',
 			"padding": 2 + Math.pow(this.props.node.weight, 0.5),
-			'font-size': 16 + Math.pow(this.props.node.weight, 0.7)
+			'font-size': 10 + Math.pow(this.props.node.weight, 0.7)
 		};
 
 		var classes = ['node'];

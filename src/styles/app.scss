@@ -103,10 +103,11 @@ a:hover {
 	padding: 5px;
 	font-size: 14pt;
 	text-align: center;
-	background: #FAFAFA;
-	border: 1px solid #888;
+	background: none;
+	border: 0px solid #888;
 	border-radius: 10px;
 	min-width: 1em;
+	// max-width: 5em;
 	min-height: 1em;
 
 	position: absolute;
