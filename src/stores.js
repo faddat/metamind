@@ -2,6 +2,24 @@
 
 // Creating a Data Store - Listening to textUpdate action
 var Reflux = require('reflux');
+var qwest = require('qwest');
+
+var api = {};
+_.each(['post', 'get', 'delete', 'put'], (v) => {
+    api[v] = function(url, data, options) {
+        return qwest[v](hostPath(url), data, _.extend({responseType: 'json',dataType: 'json',}, options));
+    }
+});
+
+console.log('api', api);
+
+var logError = function (error) {
+    qwest.post('/analytics/error').then((response) => {
+        console.log('response', response);
+    }).catch((err) => {
+        console.log('log error error =p');
+    })
+}
 
 function handleApiError(xhr, status, err) {
     console.log('xhr, status, err', xhr, status, err);
@@ -58,46 +76,34 @@ var Store = {
 
         createMap: function(graph) {
             return new Promise((resolve, reject) => {
-                $.ajax({
-                    method: 'POST',
-                    url: hostPath('/graphs'),
-                    data: JSON.stringify(graph),
-                    success: (res) => {
-                        if (res.error) {
-                            console.log(error);
-                            return reject(error);
-                        }
+                api.post('/graphs', graph).then((res) => {
+                    if (res.error) {
+                        logError(res.error);
+                        console.log(error);
+                        return reject(error);
+                    }
 
-                        this.data.push(res.graph);
+                    this.graphs.push(res.graph);
 
-                        //Create Document with the correct ID
-                        sjsConnection.get('graph', graph.id, function(error, doc) {
-                            resolve(graph);
-                        });
-                        this.setData(this.data);
-                    },
-                    error: reject,
-                    dataType: 'json',
-                    contentType: 'application/json'
+                    resolve(res.graph);
+
+                    this.trigger(this.graphs);
+                }).catch((message) => {
+                    reject(message);
                 });
             });
         },
 
         getMaps: function() {
-            $.ajax({
-                url: hostPath('/graphs'),
-                success: (res) => {
-                    if(res.error) {
-                        console.log('error', error);
-                        return reject(error);
-                    }
-                    this.trigger(res.graphs);
-                },
-                error: (xhr, status, err) => {
-                    handleApiError(xhr, status, err);
-                },
-                dataType: 'json',
-                contentType: 'application/json'
+            api.get('/graphs').then((res) => {
+                if(res.error) {
+                    console.log('error', error);
+                    return reject(error);
+                }
+                this.graphs = res.graphs;
+                this.trigger(res.graphs);
+            }).catch((xhr, status, err) => {
+                handleApiError(xhr, status, err);
             });
         },
     }),
@@ -113,24 +119,24 @@ var Store = {
 
         openMap(id) {
             this.doc = sjsConnection.get('graph', id);
+
+            //Creates or logs => Operation was rejected (Document already exists). Trying to rollback change locally.
+            this.doc.create('json0', {
+                nodes: {
+                    root: {text: 'Mind Map'}
+                },
+                edges: []
+            });
+
             this.doc.subscribe();
+
 
             this.doc.on('after op', (op, localSite) => {
                 this.docChanged();
             });
 
             this.doc.whenReady(() => {
-                if (!this.doc.type) {
-                    this.doc.create('json0', {
-                        nodes: {
-                            root: {text: 'Mind Map'}
-                        },
-                        edges: []
-                    });
-                }
-
                 Action.docReady(id);
-
                 this.docChanged();
             });
         },
@@ -204,6 +210,12 @@ var Store = {
 
         openChannel(id) {
             this.doc = sjsConnection.get('mapchat', id);
+
+            //Creates or logs => Operation was rejected (Document already exists). Trying to rollback change locally.
+            this.doc.create('json0', {
+                chats: []
+            });
+
             this.doc.subscribe();
 
             this.doc.on('after op', (op, localSite) => {
@@ -211,18 +223,6 @@ var Store = {
             });
 
             this.doc.whenReady(() => {
-                if (!this.doc.type) {
-                    this.doc.create('json0', {
-                        chats: [
-                        /*
-                            user
-                            message
-                        */
-                        ]
-                    });
-
-                }
-
                 Action.chatReady(id);
                 this.docChanged();
             });
@@ -290,21 +290,6 @@ var Store = {
         docChanged() {
             this.trigger(this.doc.snapshot.users);
         },
-
-
-        // // Build op to create a chat
-        // _chatOp(chat) {
-        //     return {p:['chats', this.doc.snapshot.chats.length], li:chat};
-        // },
-
-
-        // // Sends a chat
-        // create(chat) {
-        //     chat.id = sjsConnection.id + this.i++;
-        //     this.doc.submitOp([
-        //         this._chatOp(chat)
-        //     ]);
-        // },
     }),
 };
 
