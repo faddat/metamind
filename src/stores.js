@@ -62,9 +62,8 @@ var Store = {
             });
         }
     }),
+
     maps: Reflux.createStore({
-
-
         getDefaultData() {
             return [];
         },
@@ -133,6 +132,7 @@ var Store = {
 
             this.doc.on('after op', (op, localSite) => {
                 this.docChanged();
+                console.log('this.doc', this.doc);
             });
 
             this.doc.whenReady(() => {
@@ -205,7 +205,10 @@ var Store = {
         },
 
         getDefaultData() {
-            return [];
+            return {
+                chats: [],
+                users: {}
+            };
         },
 
         openChannel(id) {
@@ -213,7 +216,8 @@ var Store = {
 
             //Creates or logs => Operation was rejected (Document already exists). Trying to rollback change locally.
             this.doc.create('json0', {
-                chats: []
+                chats: [],
+                users: {}
             });
 
             this.doc.subscribe();
@@ -233,7 +237,8 @@ var Store = {
         },
 
         docChanged() {
-            this.trigger(this.doc.snapshot.chats);
+            console.log('this.doc.snapshot', this.doc.snapshot);
+            this.trigger(this.doc.snapshot);
         },
 
 
@@ -250,50 +255,8 @@ var Store = {
                 this._chatOp(chat)
             ]);
         },
-    }),
-
-    //In-Map Chat Store
-    chatusers: Reflux.createStore({
-        doc: null,
-
-        init() {
-
-        },
-
-        getDefaultData() {
-            return [];
-        },
-
-        openChannel(id) {
-            this.doc = sjsConnection.get('chatusers', id);
-            this.doc.subscribe();
-
-            this.doc.on('after op', (op, localSite) => {
-                this.docChanged();
-            });
-
-            this.doc.whenReady(() => {
-                if (!this.doc.type) {
-                    this.doc.create('json0', {
-                        users: []
-                    });
-                }
-
-                this.docChanged();
-            });
-        },
-
-        closeChannel() {
-            this.doc.unsubscribe();
-        },
-
-        docChanged() {
-            this.trigger(this.doc.snapshot.users);
-        },
-    }),
+    })
 };
-
-
 
 
 module.exports = Store;

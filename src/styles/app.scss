@@ -50,7 +50,6 @@ a:hover {
 	-ms-transform: translate3d(0,0,0);
 	-o-transform: translate3d(0,0,0);
 	transform: translate3d(0,0,0);
-	background: hsla(50, 40%, 20%, 1);
 
 
 
@@ -61,6 +60,8 @@ a:hover {
 
 	margin: auto;
 	z-index: 15;
+
+	border-bottom: 2px solid #2384D1;
 }
 
 .input-box input {
@@ -70,11 +71,7 @@ a:hover {
 	padding: 5px 1em 5px 1em;
 	border: none;
 	box-sizing: border-box;
-
-	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAEElEQVR42gEFAPr/AAAAAE0AUgBOVWHfgwAAAABJRU5ErkJggg==');
-    background-repeat: repeat-x;
-    background-position: center bottom;
-    background-size: 1px 1px;
+	background: transparent;
 }
 
 .nodeframe {
@@ -103,7 +100,7 @@ a:hover {
 	padding: 5px;
 	font-size: 14pt;
 	text-align: center;
-	background: none;
+	background: white;
 	border: 0px solid #888;
 	border-radius: 10px;
 	min-width: 1em;
@@ -169,12 +166,7 @@ a:hover {
 	-ms-transform: translate3d(0,0,0);
 	-o-transform: translate3d(0,0,0);
 	transform: translate3d(0,0,0);
-	background-color: #F8F8F9;
 	height: 44px;
-	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAEElEQVR42gEFAPr/AAAAAE0AUgBOVWHfgwAAAABJRU5ErkJggg==');
-    background-repeat: repeat-x;
-    background-position: center bottom;
-    background-size: 1px 1px;
 	width: 380px;
 	z-index: 15;
 }
@@ -191,10 +183,6 @@ a:hover {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAEElEQVR42gEFAPr/AAAAAE0AUgBOVWHfgwAAAABJRU5ErkJggg==');
-    background-repeat: repeat-y;
-    background-position: center right;
-    background-size: 1px 1px;
  }
 
 .debug-bar {

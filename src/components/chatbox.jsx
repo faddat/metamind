@@ -12,53 +12,55 @@ var ChatMessage = React.createClass({
 
 	chatStyle: ReactStyle({
 		maxWidth: 500,
-		margin: '12px 0'
-	}),
-
-	chatObjectStyle: ReactStyle({
-		marginTop: 3,
+		margin: '12px 0',
 		position: 'relative'
 	}),
 
+	chatObjectStyle: ReactStyle({
+		fontSize: '12pt',
+		marginLeft: 40,
+	}),
+
 	chatMessageStyle: ReactStyle({
-		marginLeft: 35,
-		borderRadius: 2,
-		display: 'inline-block',
-		background: 'white',
-		padding: '0.8em'
+		fontSize: '12pt',
+		display: 'block',
+		opacity: '0.9',
+
 	}),
 
 	chatMessageImageStyle: ReactStyle({
 		position: 'absolute',
 		left: 0,
-		top: 0,
+		top: 2,
 		width: 35,
 		height: 35,
-		borderRadius: 18
+		borderRadius: 18,
+		boxShadow: '0 5px 5px rgba(0, 0, 0, 0.4);'
 	}),
 
 	chatTime: ReactStyle({
-		opacity: 0.4
+		opacity: '0.4'
 	}),
 
 	chatFrom: ReactStyle({
-		opacity: 0.4
+		opacity: '0.4'
 	}),
 
 	chatMeta: ReactStyle({
-		fontWeight: 500
+		opacity: '0.7',
+		fontWeight: '500'
 	}),
 
 	render: function() {
 		console.log('this.props.data', this.props.data);
 		return (<div styles={this.chatStyle}>
 				<ChatUsers />
-				<span styles={this.chatMeta}>{this.props.data.email}</span>
-				<time className="time timeago" dateTime={(new Date(this.props.data.timestamp)).toISOString()}></time>
-				<span className="time"></span>
-				<span styles={this.chatFrom}> via web</span>
+				<img src={this.props.data.picsrc} styles={this.chatMessageImageStyle} />
 				<div styles={this.chatObjectStyle}>
-					<img src={this.props.data.picsrc} styles={this.chatMessageImageStyle} />
+					<span styles={this.chatMeta}>{this.props.data.email}</span>
+					<time className="time timeago" dateTime={(new Date(this.props.data.timestamp)).toISOString()}></time>
+					<span className="time"></span>
+					<span styles={this.chatFrom}> via web</span>
 					<span styles={this.chatMessageStyle}>{this.props.data.text}</span>
 				</div>
 			</div>);
@@ -81,15 +83,18 @@ var ChatObject = React.createClass({
 	}
 });
 
-
 var ChatFrame = React.createClass({
-    mixins: [Reflux.connect(Store.appdata, "appdata"), Reflux.connect(Store.mapchat, "chats")],
+    mixins: [Reflux.connect(Store.appdata, "appdata"), Reflux.connect(Store.mapchat, "chat")],
 
 
     getInitialState: function() {
     	return {
+    		active: false,
     		appdata: false,
-    		chats: []
+    		chat: {
+    			chats: [],
+    			users: {}
+    		}
     	};
     },
 
@@ -101,42 +106,40 @@ var ChatFrame = React.createClass({
 		color: 'rgba(0, 0, 0, 0.8)',
 		fontFamily: 'Georgia,Baskerville,sans-serif',
 	  	transform: 'translate3d(0,0,0)',
-		background: 'hsla(50, 0%, 90%, 1)',
+		// background: 'hsla(50, 0%, 90%, 1)',
 		position: 'absolute',
 		top: 44,
 		bottom: 0,
 		left: 0,
 		width: 380,
-		backgroundImage: 'url(\'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAEElEQVR42gEFAPr/AAAAAE0AUgBOVWHfgwAAAABJRU5ErkJggg==\')',
-	    backgroundRepeat: 'repeat-y',
-	    backgroundPosition: 'center right',
-	    backgroundSize: '1px 1px',
-	    fontSize: 13,
 	    zIndex: 15
 	}),
 
 	chatScrollStyle: ReactStyle({
 		position: 'absolute',
-	    bottom: '5em',
+	    bottom: 75,
 		paddingLeft: 15,
 		paddingRight: 15,
 	    left: 0,
 	    right: 0,
 	    top: 0,
-		overflowY: 'auto'
+	    marginBottom: '3em',
+		overflowY: 'hidden',
 	}),
 
 	form: ReactStyle({
 		position: 'absolute',
-		bottom: '1em',
-		left: '1em',
-		right: '1em'
+		bottom: 55,
+		left: 10,
+		right: 10
 	}),
 
 	input: ReactStyle({
 		padding: '1em',
 		width: '100%',
-		boxSizing: 'border-box'
+		boxSizing: 'border-box',
+		border: 'solid 2px #2384D1',
+		background: 'transparent'
 	}),
 
 	componentWillMount: function() {
@@ -173,14 +176,23 @@ var ChatFrame = React.createClass({
 		return false;
 	},
 
+	active: ReactStyle({
+		overflowY: 'auto',
+	}),
+
+	chatActivate(e) {
+		this.setState({active: !this.state.active});
+	},
+
 	render: function() {
-		var chats = this.state.chats.map(function(v) {
-			return (<ChatObject key={v.id} data={v} />);
+		var chats = _.map(this.state.chat.chats, function(v, k) {
+			return (<ChatObject key={k} data={v} />);
 		});
+		console.log('this.state.chat.users', this.state.chat.users);
 		return (
 			<div styles={this.chatBoxStyle}>
-				<ChatUsers />
-				<div ref="chatscroll" styles={this.chatScrollStyle}>
+				<ChatUsers users={this.state.chat.users} />
+				<div ref="chatscroll" styles={this.state.active ? [this.chatScrollStyle, this.active] : this.chatScrollStyle} onClick={this.chatActivate} >
 					{chats}
 				</div>
 				<form styles={this.form} onSubmit={this.onSubmit}>
