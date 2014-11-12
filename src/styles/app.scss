@@ -76,7 +76,7 @@ a:hover {
 
 .nodeframe {
 	position: absolute;
-	left: 380px;
+	left: 0;
 	top: 0;
 	bottom: 0;
 	right: 0;
@@ -156,34 +156,6 @@ a:hover {
 .node.edit {
 	border: 2px red dashed;
 }
-
-.top-bar {
-	position: absolute;
-	top: 0;
-	left: 0;
-	-webkit-transform: translate3d(0,0,0);
-	-moz-transform: translate3d(0,0,0);
-	-ms-transform: translate3d(0,0,0);
-	-o-transform: translate3d(0,0,0);
-	transform: translate3d(0,0,0);
-	height: 44px;
-	width: 380px;
-	z-index: 15;
-}
-
-.top-bar-nav {
-	display: block;
-	box-sizing: border-box;
-	padding: 0px 6px 0px 27px;
-	line-height: 43px;
-	font-size: 16px;
-	font-weight: 400;
-	color: #2384D1;
-	width: 100%;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
- }
 
 .debug-bar {
 	display: none;

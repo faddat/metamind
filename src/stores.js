@@ -21,9 +21,9 @@ var logError = function (error) {
     })
 }
 
-function handleApiError(xhr, status, err) {
-    console.log('xhr, status, err', xhr, status, err);
-    if (err === 'Unauthorized') {
+function handleApiError(xhr) {
+    console.log('xhr', xhr);
+    if (status == '401') {
         Action.authFail();
         return;
     }
@@ -46,22 +46,17 @@ var Store = {
         },
 
         getUser() {
-            $.ajax({
-                method: 'GET',
-                url: hostPath('/user'),
-                success: (res) => {
+            api.get('/user').then((res) => {
                     this.appdata.user = res.user;
                     this.trigger(res.appdata);
-                },
-                error: (a, b, c, d) => {
-                    handleApiError(a, b, c, d);
+                }).catch((xhr, status, message) => {
+                    handleApiError(xhr, status, message);
                     console.log('get user fail')
-                },
-                dataType: 'json',
-                contentType: 'application/json'
-            });
+                });
         }
     }),
+
+
 
     maps: Reflux.createStore({
         getDefaultData() {
@@ -88,6 +83,7 @@ var Store = {
 
                     this.trigger(this.graphs);
                 }).catch((message) => {
+                    handleApiError(xhr, status, err);
                     reject(message);
                 });
             });
@@ -112,8 +108,7 @@ var Store = {
         i: 0,
 
         init() {
-            this.listenTo(Action.openMap, this.openMap);
-            this.listenTo(Action.closeMap, this.closeMap);
+
         },
 
         openMap(id) {

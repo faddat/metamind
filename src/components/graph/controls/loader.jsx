@@ -6,7 +6,7 @@
 
 var React = require('react');
 
-var _t = require('../assets/js/translation');
+var _t = require('../../../assets/js/translation');
 
 
 var Loader = React.createClass({

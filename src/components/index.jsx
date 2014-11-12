@@ -8,7 +8,7 @@ var React = require('react');
 var Reflux = require('reflux');
 
 var OverMap = require('./overmap/overmap.jsx');
-var MapFrame = require('./graph/main.jsx');
+var Graph = require('./graph');
 
 
 var HomePage = React.createClass({
@@ -16,7 +16,7 @@ var HomePage = React.createClass({
   getInitialState() {
     return {
       view: "landing",
-      view_data: {}
+      data: {}
     };
   },
 
@@ -36,12 +36,10 @@ var HomePage = React.createClass({
     });
   },
 
-  onOpenMap(id) {
+  onOpenMap(graph) {
     this.setState({
-      view: "map",
-      view_data: {
-        id: id
-      }
+      view: "graph",
+      data: graph
     });
   },
 
@@ -49,8 +47,8 @@ var HomePage = React.createClass({
     if (this.state.view == "overview")
       return (<OverMap />);
 
-    if (this.state.view == "map")
-      return (<MapFrame id={this.state.view_data.id} />);
+    if (this.state.view == "graph")
+      return (<Graph graph={this.state.data} />);
 
     return (<div />);
   }

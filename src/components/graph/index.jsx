@@ -20,32 +20,29 @@ Replace some code with functions
 Get text to show
 Draw edges in SVG :)
 Scrolling *eek*
-
-
-To Do:
 Disable text box if nothing is selected:
 Make it really beautiful
-Mindmap Title
-A
-dd transitions to nodes to make them smoothly move around
-
-MPD
 Saving documents
 Multiple Documents
 Collaboration
 
+
+To Do:
+Add transitions to nodes to make them smoothly move around
+
+
 **/
 
-var NavBar = require('../nav.jsx');
-var DebugBar = require('../debugbar.jsx');
-var InputBox = require('../inputbox.jsx');
-var Node = require('./node.jsx');
-var Edge = require('./edge.jsx');
-var ChatFrame = require('../chatbox.jsx');
-var Loader = require('../loader.jsx');
+var Layout = require('./layouts/tree');
+
+var Nav = require('./controls/nav.jsx');
+var DebugBar = require('./controls/debugbar.jsx');
+var InputBox = require('./controls/inputbox.jsx');
+var ChatFrame = require('./controls/chatbox.jsx');
+
+var Loader = require('./controls/loader.jsx');
 var KeyMap = require('../../assets/js/keymap');
 
-var TreeSpread = require('./layouts/treespread.jsx');
 
 var LocalStorageLoader = {
 	load: function(id) {
@@ -59,9 +56,8 @@ var LocalStorageLoader = {
 	}
 };
 
-var MapFrame = React.createClass({
-    mixins: [Reflux.ListenerMixin],
-	displayName: 'MapFrame',
+var GraphEditor = React.createClass({
+    mixins: [Reflux.connect(Store.mapdata, 'data')],
 	v: 0,
 
 	getInitialState: function() {
@@ -70,13 +66,7 @@ var MapFrame = React.createClass({
 			selected: false,
 			inputMode: 'select',
 			debug: [],
-			framewidth: 0,
-			frameheight: 0,
 			loader: null,
-			layout: {
-				nodes: [],
-				edges: []
-			}
 		}
 	},
 
@@ -84,38 +74,18 @@ var MapFrame = React.createClass({
 	componentWillMount: function() {
 		this.fn = this.genFn();
 
-
-		//Map Has New Data Changes
-		this.listenTo(Store.mapdata, this.onDocChanged);
-
 		//Before
-		this.listenTo(Action.selectNode, this.onSelectNode);
+		// this.listenTo(Action.selectNode, this.onSelectNode);
+
+		Store.mapdata.openMap(this.props.graph.id);
 	},
 
 	componentDidMount: function() {
 		KeyMap.bind(this.fn);
-
-		$('.nodeframe').panzoom({
-			$set: $('.edgepanframe>g, .nodepanframe')
-		});
-
-		var $frame = $(this.refs.nodeframe.getDOMNode());
-
-		this.setState({
-			framewidth: $frame.width(),
-			frameheight: $frame.height()
-		});
-		window.addEventListener('resize', this.resize, false);
 	},
 
 	componentWillUnmount: function() {
-
-	},
-
-	onDocChanged: function(data) {
-		this.setState({
-			layout: TreeSpread.run(data)
-		});
+		Store.mapdata.closeMap();
 	},
 
 	onSelectNode(id) {
@@ -184,14 +154,6 @@ var MapFrame = React.createClass({
 		}
 	},
 
-	resize: function(ev) {
-		var $frame = $(this.refs.nodeframe.getDOMNode())
-		this.setState({
-			framewidth: $frame.width(),
-			frameheight: $frame.height()
-		});
-	},
-
 	setDebugText: function(i, text) {
 		var debug = this.state.debug;
 		debug[i] = text;
@@ -225,53 +187,17 @@ var MapFrame = React.createClass({
 			height: '100%'
     	};
 
-    	var layout = this.state.layout;
-
-    	var nodes = layout.nodes.map(function(v) {
-    		return <Node
-	    		key={v.index}
-	    		node={v}
-				fn={this.fn}
-	    		inputMode={this.state.inputMode}
-	    		selected={this.state.selected == v.id} />;
-    	}.bind(this));
-
-    	var edgeElems = [];
-
-    	var edges = layout.edges;
-    	for (var i = edges.length - 1; i >= 0; i--) {
-    		for (var j = edges[i].length - 1; j >= 0; j--) {
-	   			edgeElems.push(
-	   				<Edge
-	   					key={i + "-" + j}
-	   					text={edges[i][j].totalweight}
-	   					soft={edges[i][j].totalweight == 1}
-	   					x1={layout.nodes[i].x}
-	   					y1={layout.nodes[i].y}
-	   					x2={layout.nodes[edges[i][j].next].x}
-	   					y2={layout.nodes[edges[i][j].next].y} />
-	   				);
-    		};
-    	};
         return <div ref="app" style={style}>
-        	<NavBar fn={{onClick: this.newMap}} />
-        	<ChatFrame id={this.props.id} />
+        	<Nav shareURL={this.props.graph.shareURL}>Share</Nav>
+        	<ChatFrame id={this.props.graph.id} />
         	<InputBox ref="inputBox" active={this.isSelectMode()} submit={this.handleTextSubmit}/>
-        	<div className="nodeframe" ref="nodeframe" onClick={this.handleClick}>
-        		<div className="nodepanframe">
-	        		{nodes}
-		     	</div>
-	        	<svg className="edgepanframe" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
-	     			version="1.2" baseProfile="tiny" width="100%" height="100%" x="0px" y="0px" viewBox={"0 0 " + this.state.framewidth + " " + this.state.frameheight}>
-	     			<g width="100%" height="100%">
-	     			{edgeElems}
-	     			</g>
-	     		</svg>
-        	</div>
+
+        	<Layout graph={this.state.data} />
+
      		<DebugBar debug={this.state.debug} />
      		<Loader mode={this.state.loader} onClose={this.loaderOff}/>
         </div>;
     }
 });
 
-module.exports = MapFrame;
+module.exports = GraphEditor;
