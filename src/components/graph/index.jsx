@@ -75,7 +75,7 @@ var GraphEditor = React.createClass({
 		this.fn = this.genFn();
 
 		//Before
-		// this.listenTo(Action.selectNode, this.onSelectNode);
+		Action.graph.selectNode.listen(this.onSelectNode);
 
 		Store.mapdata.openMap(this.props.graph.id);
 	},
@@ -111,7 +111,7 @@ var GraphEditor = React.createClass({
 		}
 
 		var id = this.createNode();
-		Action.selectNode(id);
+		Action.graph.selectNode(id);
 		ev.preventDefault();
 	},
 
@@ -144,7 +144,7 @@ var GraphEditor = React.createClass({
 
 	handleTextSubmit: function() {
 		this.setNodeText(this.state.selected, this.refs.inputBox.getText());
-		Action.selectNode();
+		Action.graph.selectNode();
 	},
 
 	handleClick: function(e) {

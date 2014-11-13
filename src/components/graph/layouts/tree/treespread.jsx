@@ -67,12 +67,7 @@ module.exports = {
 			renderData.nodes[prev].weight += 1 + renderData.nodes[i].weight;
 			renderData.edges[prev][prevIndex].totalweight += 1 + renderData.nodes[i].weight;
 
-			// renderData.edges[prev] = this.scatterEdges(renderData.edges[prev], renderData.nodes[prev].parent_w - renderData.edges[prev][prevIndex].totalweight);
 
-			// //Backlink
-			// for (var j = renderData.edges[prev].length - 1; j >= 0; j--) {
-			// 	renderData.nodes[renderData.edges[prev][j].next].prevIndex = j;
-			// };
 		};
 
 		this.recalcNodes(renderData.nodes, renderData.edges);
@@ -146,6 +141,12 @@ module.exports = {
 
 		res = divideSort(edges, inweight);
 
+		edges[prev] = this.scatterEdges(edges[prev], nodes[prev].parent_w - edges[prev][prevIndex].totalweight);
+
+		//Backlink
+		for (var j = edges[prev].length - 1; j >= 0; j--) {
+			nodes[edges[prev][j].next].prevIndex = j;
+		};
 		return res;
 	},
 
@@ -163,7 +164,7 @@ module.exports = {
 				tw = nodes[i].weight - smlen;
 				push = 0;
 				if (i != 0) {
-					push = nodes[i].parent_w - nodes[i].weight;
+					push = (nodes[i].parent_w - nodes[i].weight) / 4;
 					tw += push;
 				}
 

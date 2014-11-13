@@ -5,12 +5,13 @@
 'use strict';
 
 var React = require('react');
+var Editor = require('../../index.jsx');
 
 var Node = React.createClass({
 
-	clickHandler: function(ev) {
-		Action.selectNode(this.props.node.id);
-		return false;
+	clickHandler: function(e) {
+		Action.graph.selectNode(this.props.node.id);
+		e.preventDefault();
 	},
 
 	render: function() {

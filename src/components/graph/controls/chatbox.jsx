@@ -108,28 +108,29 @@ var ChatFrame = React.createClass({
 	  	transform: 'translate3d(0,0,0)',
 		// background: 'hsla(50, 0%, 90%, 1)',
 		position: 'absolute',
-		top: 44,
+		top: 0,
 		bottom: 0,
 		left: 0,
 		width: 380,
-	    zIndex: 15
+	    zIndex: '100',
+		// background: 'rgba(255, 255, 255, 0.9)',
 	}),
 
 	chatScrollStyle: ReactStyle({
 		position: 'absolute',
-	    bottom: 75,
+	    bottom: 0,
 		paddingLeft: 15,
 		paddingRight: 15,
 	    left: 0,
 	    right: 0,
-	    top: 0,
+	    top: 75,
 	    marginBottom: '3em',
 		overflowY: 'hidden',
 	}),
 
 	form: ReactStyle({
 		position: 'absolute',
-		bottom: 55,
+		bottom: 10,
 		left: 10,
 		right: 10
 	}),
@@ -139,8 +140,13 @@ var ChatFrame = React.createClass({
 		width: '100%',
 		boxSizing: 'border-box',
 		border: 'solid 2px #2384D1',
-		background: 'transparent'
+		background: 'transparent',
 	}),
+
+	active: ReactStyle({
+		overflowY: 'auto',
+	}),
+
 
 	componentWillMount: function() {
 		console.log('ChatFrameWillMount', this.state);
@@ -175,11 +181,6 @@ var ChatFrame = React.createClass({
 		e.preventDefault();
 		return false;
 	},
-
-	active: ReactStyle({
-		overflowY: 'auto',
-	}),
-
 	chatActivate(e) {
 		this.setState({active: !this.state.active});
 	},

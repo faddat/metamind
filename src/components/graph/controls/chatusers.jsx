@@ -46,11 +46,11 @@ var ChatUsers = React.createClass({
 
 	container: ReactStyle({
 		zindex: '1',
-		background: 'white',
+		background: 'none',
 		position: 'absolute',
 		left: '0',
 		right: '0',
-		bottom: '0'
+		top: '0'
 	}),
 
 
