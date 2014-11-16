@@ -42,6 +42,14 @@ var Tree = React.createClass({
 		}
 	},
 
+
+
+	handleClick: function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		Action.graph.deselectNode();
+	},
+
 	resize: function(ev) {
 		var $frame = $(this.refs.nodeframe.getDOMNode())
 		this.setState({
@@ -54,7 +62,7 @@ var Tree = React.createClass({
 
     	var nodes = this.state.nodes.map(function(v) {
     		return <Node
-	    		key={v.index}
+	    		key={'node' + v.index}
 	    		node={v}
 				fn={this.fn}
 	    		inputMode={this.state.inputMode}
@@ -69,7 +77,7 @@ var Tree = React.createClass({
     		for (var j = edges[i].length - 1; j >= 0; j--) {
 	   			edgeElems.push(
 	   				<Edge
-	   					key={i + "-" + j}
+	   					key={i + 'treeedge' + j}
 	   					text={edges[i][j].totalweight}
 	   					soft={edges[i][j].totalweight == 1}
 	   					x1={this.state.nodes[i].x}

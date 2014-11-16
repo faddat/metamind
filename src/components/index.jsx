@@ -23,6 +23,7 @@ var HomePage = React.createClass({
   componentDidMount() {
     this.listenTo(Action.openOverview, this.openOverview);
     this.listenTo(Action.openMap, this.onOpenMap);
+    this.listenTo(Action.closeMap, this.onCloseMap);
     this.listenTo(Action.authFail, this.onAuthFail);
   },
 
@@ -43,14 +44,22 @@ var HomePage = React.createClass({
     });
   },
 
+  onCloseMap(graph) {
+    this.setState({
+      view: "overview",
+    });
+  },
+
   render() {
-    if (this.state.view == "overview")
-      return (<OverMap />);
+    var elem = '';
 
-    if (this.state.view == "graph")
-      return (<Graph graph={this.state.data} />);
-
-    return (<div />);
+    if (this.state.view == "graph") {
+      elem = (<Graph key="editor" graph={this.state.data} />);
+    }
+    if (this.state.view == "overview") {
+      elem = (<OverMap key="overview" />);
+    }
+    return (<div>{elem}</div>);
   }
 });
 

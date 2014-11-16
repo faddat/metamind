@@ -28,13 +28,13 @@ var NewMap = React.createClass({
 			loading: true
 		});
 
-		Store.maps.createMap(data).then((map) => {
+		Store.maps.createMap(data).then((graph) => {
 			this.setState({
 				loading: false,
 				error: false
 			});
 
-			this.props.onCreate(map);
+			this.props.onCreate(graph);
 
 		}, () => {
 			this.setState({

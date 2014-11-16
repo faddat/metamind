@@ -14,7 +14,7 @@ var ModalInput = React.createClass({
         return (
             <p>
                 <label>{this.props.label}</label>
-                <input ref="input" autocomplete="off" type={this.props.type} id={this.props.id} style={{backgroundImage: "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGP6zwAAAgcBApocMXEAAAAASUVORK5CYII=);"}} />
+                <input ref='input' autocomplete='off' type={this.props.type} id={this.props.id} style={{backgroundImage: 'url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR4nGP6zwAAAgcBApocMXEAAAAASUVORK5CYII=);'}} />
             </p>
         );
     }
@@ -27,10 +27,10 @@ var ModalButton = React.createClass({
         };
     },
     render: function() {
-        var type = this.props.onClick ? "button" : "submit";
+        var type = this.props.onClick ? 'button' : 'submit';
 
         if (this.props.loading) {
-            this.props.className = "loading";
+            this.props.className = 'loading';
         }
 
         return (
@@ -54,19 +54,19 @@ var MorphForm = React.createClass({
     },
     render: function() {
         var inputs = this.props.form.inputs.map(function(v) {
-            return <ModalInput key={v.id} ref={v.id} label={v.label} type={v.type} id={v.id}/>
+            return <ModalInput key={'modalinput' + v.id} ref={v.id} label={v.label} type={v.type} id={v.id}/>
         });
 
         var buttons = this.props.form.buttons.map(function(v) {
-            return <ModalButton key={v.id} text={v.text} id={v.id} onClick={v.onClick} loading={v.loading} />;
+            return <ModalButton key={'modalbutton' + v.id} text={v.text} id={v.id} onClick={v.onClick} loading={v.loading} />;
         });
 
         return (
-            <div className="content-style-form">
-                <span className="icon icon-close" onClick={this.props.onClose}>Close the dialog</span>
+            <div className='content-style-form'>
+                <span className='icon icon-close' onClick={this.props.onClose}>Close the dialog</span>
                 <h2>{this.props.title}</h2>
-                <form action="" ref="form" id="loginform" onSubmit={this.onSubmit}>
-                    <p className="errors"></p>
+                <form action='' ref='form' id='loginform' onSubmit={this.onSubmit}>
+                    <p className='errors'></p>
                     {inputs}
                     {buttons}
                 </form>

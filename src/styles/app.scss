@@ -42,40 +42,14 @@ a:hover {
 	left: 0;
 	right: 0;
 	background: hsla(50, 0%, 100%, 1);
-}
-
-.input-box {
-	-webkit-transform: translate3d(0,0,0);
-	-moz-transform: translate3d(0,0,0);
-	-ms-transform: translate3d(0,0,0);
-	-o-transform: translate3d(0,0,0);
-	transform: translate3d(0,0,0);
-
-
-
-	position: absolute;
-	top: 0; left: 390px; right: 10px;
-	height: 44px;
-
-
-	margin: auto;
-	z-index: 15;
-
-	border-bottom: 2px solid #2384D1;
-}
-
-.input-box input {
-	height: 100%;
-	width: 100%;
-	line-height: 2em;
-	padding: 5px 1em 5px 1em;
-	border: none;
-	box-sizing: border-box;
-	background: transparent;
+	> div {
+		height: 100%;
+		width: 100%;
+	}
 }
 
 .nodeframe {
-	position: absolute;
+	position: fixed;
 	left: 0;
 	top: 0;
 	bottom: 0;
@@ -308,44 +282,6 @@ a:hover {
 	padding: 0 0 0.6em 0.1em;
 }
 
-
-.gridster {
-	color: white;
-	width: 95%;
-	max-width: 69em;
-	border-left: 1.875em solid white;
-	border-right: 1.875em solid white;
-	margin: 0 auto;
-	padding: 5px;
-	background: #3594CB;
-}
-
-/* Smartphones landscape and portrait */
-@media only screen and (max-width : 480px) {
-
-	.gridster {
-		margin: 0;
-		border: none;
-		width: 100%;
-	}
-
-}
-
-.gridster div {
-	width: 150px;
-	height: 150px;
-	box-sizing: border-box;
-	border: 5px solid #3594CB;
-	display: block;
-	float: left;
-	list-style: none;
-	overflow: none;
-	white-space: pre-wrap;
-	word-wrap: break-word;
-	background: white;
-	color: black;
-}
-
 .clear-me {
 	clear:both;
 	display: block;
@@ -353,6 +289,7 @@ a:hover {
 }
 
 .pri-button {
+	cursor: pointer;
     background-color: #3594CB;
     color: #FFF;
     transition: opacity 0.1s ease 0.5s;

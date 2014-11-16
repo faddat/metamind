@@ -41,7 +41,6 @@ var InputBox = require('./controls/inputbox.jsx');
 var ChatFrame = require('./controls/chatbox.jsx');
 
 var Loader = require('./controls/loader.jsx');
-var KeyMap = require('../../assets/js/keymap');
 
 
 var LocalStorageLoader = {
@@ -75,17 +74,41 @@ var GraphEditor = React.createClass({
 		this.fn = this.genFn();
 
 		//Before
-		Action.graph.selectNode.listen(this.onSelectNode);
+		this.listenage = [];
+		this.listenage.push(Action.graph.selectNode.listen(this.onSelectNode));
+		this.listenage.push(Action.graph.deselectNode.listen(this.onDeselectNode));
+
 
 		Store.mapdata.openMap(this.props.graph.id);
+
 	},
 
 	componentDidMount: function() {
-		KeyMap.bind(this.fn);
+
+		Mousetrap.bind(['tab'], (e) => {
+			e.preventDefault();
+
+			this.branchNode(e);
+		});
+
+		Mousetrap.bind(['enter'], (e) => {
+			e.preventDefault();
+
+			if (this.isSelectMode()) {
+				this.handleTextSubmit();
+			}
+
+		});
+
+		Mousetrap.bind(['alt+shift+n', 'alt+shift+n'], function(e) {
+
+		});
+
 	},
 
 	componentWillUnmount: function() {
 		Store.mapdata.closeMap();
+		_.map(this.listenage, (v, k) => { return v(); })
 	},
 
 	onSelectNode(id) {
@@ -134,7 +157,7 @@ var GraphEditor = React.createClass({
 		return this.state.selected && this.state.inputMode == 'select';
 	},
 
-	freeMode: function() {
+	onDeselectNode: function() {
 		this.setState({selected: false});
 	},
 
@@ -145,13 +168,6 @@ var GraphEditor = React.createClass({
 	handleTextSubmit: function() {
 		this.setNodeText(this.state.selected, this.refs.inputBox.getText());
 		Action.graph.selectNode();
-	},
-
-	handleClick: function(e) {
-		if (!this.isFreeMode()) {
-			this.freeMode();
-			return;
-		}
 	},
 
 	setDebugText: function(i, text) {
@@ -186,7 +202,7 @@ var GraphEditor = React.createClass({
 			width: '100%',
 			height: '100%'
     	};
-
+    	console.log('render');
         return <div ref="app" style={style}>
         	<Nav shareURL={this.props.graph.shareURL}>Share</Nav>
         	<ChatFrame id={this.props.graph.id} />

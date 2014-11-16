@@ -21,8 +21,8 @@ var logError = function (error) {
     })
 }
 
-function handleApiError(xhr) {
-    console.log('xhr', xhr);
+function handleApiError(xhr, status, message) {
+    console.log(xhr, status, message);
     if (status == '401') {
         Action.authFail();
         return;
@@ -78,7 +78,6 @@ var Store = {
                     }
 
                     this.graphs.push(res.graph);
-
                     resolve(res.graph);
 
                     this.trigger(this.graphs);
@@ -97,8 +96,8 @@ var Store = {
                 }
                 this.graphs = res.graphs;
                 this.trigger(res.graphs);
-            }).catch((xhr, status, err) => {
-                handleApiError(xhr, status, err);
+            }).catch(function(message)  {
+                handleApiError(this, this.status, message);
             });
         },
     }),
@@ -111,16 +110,16 @@ var Store = {
 
         },
 
-        openMap(id) {
-            this.doc = sjsConnection.get('graph', id);
+        getDefaultData() {
+            return {
+                nodes: {},
+                edges: [],
+            }
+        },
 
-            //Creates or logs => Operation was rejected (Document already exists). Trying to rollback change locally.
-            this.doc.create('json0', {
-                nodes: {
-                    root: {text: 'Mind Map'}
-                },
-                edges: []
-            });
+        openMap(id) {
+            console.log(id);
+            this.doc = sjsConnection.get('graph', id);
 
             this.doc.subscribe();
 
@@ -191,7 +190,7 @@ var Store = {
 
 
     //In-Map Chat Store
-    mapchat: Reflux.createStore({
+    chat: Reflux.createStore({
         doc: null,
         i: 0,
 
@@ -207,13 +206,7 @@ var Store = {
         },
 
         openChannel(id) {
-            this.doc = sjsConnection.get('mapchat', id);
-
-            //Creates or logs => Operation was rejected (Document already exists). Trying to rollback change locally.
-            this.doc.create('json0', {
-                chats: [],
-                users: {}
-            });
+            this.doc = sjsConnection.get('chat', id);
 
             this.doc.subscribe();
 

@@ -7,7 +7,7 @@ module.exports = {
 			edges: []
 		};
 
-		if (typeof graphData.nodes === 'undefined')
+		if (_.size(graphData.nodes) == 0)
 			return renderData;
 
 		//Set up Root Node (no parent)
@@ -19,7 +19,8 @@ module.exports = {
 			parent_w: 0,
 			parent_t: 0,
 			weight: 0,
-			text: graphData.nodes['root'].text
+			text: graphData.nodes['root'].text,
+			style: graphData.nodes['root'].style,
 		});
 
 		var nodeIndexById = {
@@ -141,19 +142,20 @@ module.exports = {
 
 		res = divideSort(edges, inweight);
 
-		edges[prev] = this.scatterEdges(edges[prev], nodes[prev].parent_w - edges[prev][prevIndex].totalweight);
+		// edges[prev] = this.scatterEdges(edges[prev], nodes[prev].parent_w - edges[prev][prevIndex].totalweight);
 
-		//Backlink
-		for (var j = edges[prev].length - 1; j >= 0; j--) {
-			nodes[edges[prev][j].next].prevIndex = j;
-		};
+		// //Backlink
+		// for (var j = edges[prev].length - 1; j >= 0; j--) {
+		// 	nodes[edges[prev][j].next].prevIndex = j;
+		// };
+
 		return res;
 	},
 
 	recalcNodes: function(nodes, edges)
 	{
 		var r, t, tw, r2, w, smallCount, push, bigEdges, smallEdges;
-		var distance = 70;
+		var distance = 45;
 
 		for (var i = 0; i < edges.length; i++) {
 			bigEdges = edges[i].filter(function(v) { return true; });//v.totalweight > 1;});
@@ -174,10 +176,17 @@ module.exports = {
 					r = (bigEdges[j].totalweight / tw) / 2;
 					t += r;
 					var dist = distance + distance * Math.pow(bigEdges[j].totalweight, 0.5);
-					nodes[bigEdges[j].next].x = Math.cos(t * 2 * Math.PI) * (dist) + nodes[i].x;
-					nodes[bigEdges[j].next].y = Math.sin(t * 2 * Math.PI) * (dist) + nodes[i].y;
-					nodes[bigEdges[j].next].parent_t = t;
-					nodes[bigEdges[j].next].parent_w = nodes[i].weight - smlen;
+					if (nodes[bigEdges[j].next].style == 'light') {
+						nodes[bigEdges[j].next].x = Math.cos(t * 2 * Math.PI) * (dist/2*3) + nodes[i].x;
+						nodes[bigEdges[j].next].y = Math.sin(t * 2 * Math.PI) * (dist/2*3) + nodes[i].y;
+						nodes[bigEdges[j].next].parent_t = t;
+						nodes[bigEdges[j].next].parent_w = nodes[i].weight - smlen;
+					} else {
+						nodes[bigEdges[j].next].x = Math.cos(t * 2 * Math.PI) * (dist) + nodes[i].x;
+						nodes[bigEdges[j].next].y = Math.sin(t * 2 * Math.PI) * (dist) + nodes[i].y;
+						nodes[bigEdges[j].next].parent_t = t;
+						nodes[bigEdges[j].next].parent_w = nodes[i].weight - smlen;
+					}
 					t += r;
 
 				};

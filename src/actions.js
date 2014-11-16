@@ -28,6 +28,7 @@ var Actions = Reflux.createActions([
 
 Actions.graph = Reflux.createActions([
 	'selectNode',
+	'deselectNode',
 ]);
 
 module.exports = Actions;

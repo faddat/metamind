@@ -84,7 +84,7 @@ var ChatObject = React.createClass({
 });
 
 var ChatFrame = React.createClass({
-    mixins: [Reflux.connect(Store.appdata, "appdata"), Reflux.connect(Store.mapchat, "chat")],
+    mixins: [Reflux.connect(Store.appdata, "appdata"), Reflux.connect(Store.chat, "chat")],
 
 
     getInitialState: function() {
@@ -150,13 +150,11 @@ var ChatFrame = React.createClass({
 
 	componentWillMount: function() {
 		console.log('ChatFrameWillMount', this.state);
-		Store.mapchat.openChannel(this.props.id);
-
-		// this.listenTo(Store.mapchat, this.onChat);
+		Store.chat.openChannel(this.props.id);
 	},
 
 	componentWillUnmount: function() {
-		Store.mapchat.closeChannel();
+		Store.chat.closeChannel();
 	},
 
 	componentDidUpdate: function() {
@@ -170,7 +168,7 @@ var ChatFrame = React.createClass({
 	},
 
 	onSubmit: function(e) {
-		Store.mapchat.create({
+		Store.chat.create({
 			t: 1,
 			text: this.refs.chatinput.getDOMNode().value,
 			timestamp: new Date(),
@@ -187,7 +185,7 @@ var ChatFrame = React.createClass({
 
 	render: function() {
 		var chats = _.map(this.state.chat.chats, function(v, k) {
-			return (<ChatObject key={k} data={v} />);
+			return (<ChatObject key={'chatobject' + k} data={v} />);
 		});
 		console.log('this.state.chat.users', this.state.chat.users);
 		return (
