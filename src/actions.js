@@ -10,10 +10,7 @@ var Reflux = require('reflux');
 
 var Actions = Reflux.createActions([
     'openOverview',
-	'openMap',
-	'closeMap',
 
-	'refreshMaps',
     'createMap',
     'deleteMap',
 

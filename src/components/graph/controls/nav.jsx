@@ -29,7 +29,6 @@ function selectText(element) {
 var Back = React.createClass({
 
 	onClick(e) {
-		Action.closeMap();
 		e.preventDefault();
 		e.stopPropagation();
 	},

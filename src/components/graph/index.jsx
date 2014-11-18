@@ -42,21 +42,8 @@ var ChatFrame = require('./controls/chatbox.jsx');
 
 var Loader = require('./controls/loader.jsx');
 
-
-var LocalStorageLoader = {
-	load: function(id) {
-		var state;
-		// state = JSON.parse(localStorage.getItem(id));
-
-		if (typeof state === 'undefined' || !state || typeof state.nodes === 'undefined' || state.nodes.length == 0)
-			return false;
-
-		return state;
-	}
-};
-
 var GraphEditor = React.createClass({
-    mixins: [Reflux.connect(Store.mapdata, 'data')],
+    mixins: [Reflux.connect(Store.mapdata, 'data'), ReactRouter.CurrentPath],
 	v: 0,
 
 	getInitialState: function() {
@@ -79,8 +66,8 @@ var GraphEditor = React.createClass({
 		this.listenage.push(Action.graph.deselectNode.listen(this.onDeselectNode));
 
 
-		Store.mapdata.openMap(this.props.graph.id);
-
+		console.log('this.props.params.id', this.props.params.id);
+		Store.mapdata.openMap(this.props.params.id);
 	},
 
 	componentDidMount: function() {
@@ -107,6 +94,7 @@ var GraphEditor = React.createClass({
 	},
 
 	componentWillUnmount: function() {
+		console.log('componentWillUnmount');
 		Store.mapdata.closeMap();
 		_.map(this.listenage, (v, k) => { return v(); })
 	},
@@ -204,8 +192,8 @@ var GraphEditor = React.createClass({
     	};
     	console.log('render');
         return <div ref="app" style={style}>
-        	<Nav shareURL={this.props.graph.shareURL}>Share</Nav>
-        	<ChatFrame id={this.props.graph.id} />
+        	<Nav shareURL={this.getCurrentPath()}>Share</Nav>
+        	<ChatFrame id={this.props.params.id} />
         	<InputBox ref="inputBox" active={this.isSelectMode()} submit={this.handleTextSubmit}/>
 
         	<Layout graph={this.state.data} />

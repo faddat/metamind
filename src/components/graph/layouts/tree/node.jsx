@@ -22,7 +22,7 @@ var Node = React.createClass({
 		var style = {
 			"-webkit-transform": 'translate3d('+x+'px, '+y+'px, 0) translate3d(-50%, -50%, 0)',
 			"-moz-transform": 'translate3d('+x+'px, '+y+'px, 0) translate3d(-50%, -50%, 0)',
-			"transform": 'translate3d('+x+'px, '+y+'px 0) translate3d(-50%, -50%, 0)',
+			"transform": 'translate3d('+x+'px, '+y+'px, 0) translate3d(-50%, -50%, 0)',
 			"padding": 2 + Math.pow(this.props.node.weight/2, 0.5),
 			'font-size': 14 + Math.pow(this.props.node.weight/2, 0.5),
 			'box-shadow': '0 3px 3px rgba(100, 100, 100, 0.7)',

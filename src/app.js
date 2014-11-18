@@ -16,10 +16,6 @@ window.hostPath = function(path) {
 
 window._ = require('underscore');
 
-var ws = new WebSocket(config.socketEndpoint);
-
-window.sjsConnection = new sharejs.Connection(ws);
-// sjsConnection.debug = true;
 
 global.Action = require('./actions.js');
 global.Store = require('./stores.js');

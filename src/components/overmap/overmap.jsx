@@ -129,7 +129,7 @@ var OverMapNode = React.createClass({
 });
 
 var OverMap = React.createClass({
-    mixins: [Reflux.connect(Store.maps, 'graphs')],
+    mixins: [Reflux.connect(Store.maps, 'graphs'), Navigation],
 	gridster: null,
 
 	getInitialState: function() {
@@ -139,13 +139,13 @@ var OverMap = React.createClass({
 	},
 
 	componentDidMount: function() {
-		Action.refreshMaps();
+		Store.maps.getMaps();
 	},
 
 	mapCreated: function(graph) {
 		this.refs.newmap.toggle();
-		console.log('graph', graph);
-		Action.openMap(graph);
+		this.transitionTo('/app/graph/:id', {id: child.props.map.id});
+
 	},
 
 	rmChild: function(child) {
@@ -153,7 +153,7 @@ var OverMap = React.createClass({
 	},
 
 	openChild: function(child) {
-		Action.openMap(child.props.map);
+		this.transitionTo('/app/graph/:id', {id: child.props.map.id});
 	},
 
 	render: function() {

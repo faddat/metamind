@@ -4,14 +4,34 @@
 var Reflux = require('reflux');
 var qwest = require('qwest');
 
+var authData = {};
+
 var api = {};
+
+
+  // componentDidMount() {
+  //   this.listenTo(Action.authFail, this.onAuthFail);
+  // },
+
+  // onAuthFail() {
+  //   document.location.href = '/';
+  // },
 _.each(['post', 'get', 'delete', 'put'], (v) => {
     api[v] = function(url, data, options) {
-        return qwest[v](hostPath(url), data, _.extend({responseType: 'json',dataType: 'json',}, options));
+        var _data = typeof data !== 'object' ? {} : data;
+        var _options = typeof options !== 'object' ? {} : options;
+        var _data = _.extend(_data, authData);
+        var _options = _.extend(_options, {
+            responseType: 'json',
+            dataType: 'json',
+        });
+
+        console.log('_data', _data);
+        console.log('_options', _options);
+
+        return qwest[v](hostPath(url), _data, _options);
     }
 });
-
-console.log('api', api);
 
 var logError = function (error) {
     qwest.post('/analytics/error').then((response) => {
@@ -32,27 +52,81 @@ function handleApiError(xhr, status, message) {
 var Store = {
     appdata: Reflux.createStore({
         appdata: {
-            user: {
-                email: "",
-                picsrc: ""
+            user: null,
+            token: {
+                id: null
             }
-        },
-        init() {
-            this.getUser();
         },
 
         getDefaultData() {
             return this.appdata;
         },
 
-        getUser() {
-            api.get('/user').then((res) => {
-                    this.appdata.user = res.user;
-                    this.trigger(res.appdata);
-                }).catch((xhr, status, message) => {
-                    handleApiError(xhr, status, message);
-                    console.log('get user fail')
-                });
+        isLoggedin() {
+            return this.validate(this.appdata);
+        },
+
+        validate(data) {
+            return data != null
+              && _.isObject(data.user)
+              && _.isObject(data.token)
+              && typeof data.token.id == 'string';
+        },
+
+        storedData() {
+            var appdata = localStorage.getItem('appdata');
+
+            if (!appdata) {
+                return false;
+            }
+
+            appdata = JSON.parse(appdata);
+            if (!this.validate(appdata)) {
+                return false;
+            }
+
+            return appdata;
+        },
+
+        connectSocket(token) {
+            var ws = new WebSocket(config.socketEndpoint + token);
+            window.sjsConnection = new sharejs.Connection(ws);
+            sjsConnection.debug = true;
+        },
+
+        setAppdata(data) {
+            this.appdata = data;
+            localStorage.setItem('appdata', JSON.stringify(this.appdata));
+
+            this.connectSocket(data.token.id);
+            authData.access_token = data.token.id;
+
+            this.trigger(this.appdata);
+        },
+
+        login(data) {
+            var stored = this.storedData();
+
+            if (stored) {
+                this.setAppdata(stored);
+                return;
+            }
+
+            api.post('/login', data).then((res) => {
+                this.setAppdata(res);
+            }).catch(function(message)  {
+                handleApiError(this, this.status, message);
+            });
+        },
+
+        register(data) {
+            api.post('/user', data).then((res) => {
+                if (res.inserted == 1) {
+                    this.login(data);
+                }
+            }).catch(function(message)  {
+                handleApiError(this, this.status, message);
+            });
         }
     }),
 
@@ -65,12 +139,12 @@ var Store = {
 
         init: function() {
             this.listenTo(Action.createMap, this.createMap);
-            this.listenTo(Action.refreshMaps, this.getMaps);
         },
 
         createMap: function(graph) {
             return new Promise((resolve, reject) => {
-                api.post('/graphs', graph).then((res) => {
+                api.post('/graph', graph).then((res) => {
+                    console.log('res', res);
                     if (res.error) {
                         logError(res.error);
                         console.log(error);
@@ -82,14 +156,15 @@ var Store = {
 
                     this.trigger(this.graphs);
                 }).catch((message) => {
-                    handleApiError(xhr, status, err);
+                    handleApiError(this, this.status, message);
                     reject(message);
                 });
             });
         },
 
         getMaps: function() {
-            api.get('/graphs').then((res) => {
+            //posting because gets are retarted with qwest
+            api.post('/graphlist').then((res) => {
                 if(res.error) {
                     console.log('error', error);
                     return reject(error);
