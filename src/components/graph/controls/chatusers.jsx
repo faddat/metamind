@@ -34,7 +34,6 @@ var ChatUser = React.createClass({
 
 	render: function() {
 			// {this.props.user.status}
-		console.log('this', this);
 		return (<div styles={this.chatStyle}>
 			<img styles={this.imgStyle} src={this.props.user.user.picsrc} />
 			</div>);
@@ -55,12 +54,9 @@ var ChatUsers = React.createClass({
 
 
 	render: function() {
-		console.log('this.props.users', this.props.users);
 		var users = _.map(this.props.users, (user, key) => {
-			console.log('user', user);
 			return (<ChatUser index={key} user={user} />);
 		});
-		console.log('users', users);
 		return (<div styles={this.container}>
 			{users}
 			</div>)

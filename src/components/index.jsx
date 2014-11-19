@@ -21,12 +21,17 @@ var Landing = require('./landing');
 
 
 var HomePage = React.createClass({
-  mixins: [Reflux.ListenerMixin],
+  mixins: [Reflux.ListenerMixin, Navigation],
 
   componentWillMount: function() {
     if (!Store.appdata.isLoggedin()) {
       Store.appdata.login();
     }
+
+    this.listenTo(Action.authFail, () => {
+      this.transitionTo('/');
+    });
+
   },
 
   render() {

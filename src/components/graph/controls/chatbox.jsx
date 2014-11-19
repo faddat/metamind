@@ -52,7 +52,6 @@ var ChatMessage = React.createClass({
 	}),
 
 	render: function() {
-		console.log('this.props.data', this.props.data);
 		return (<div styles={this.chatStyle}>
 				<ChatUsers />
 				<img src={this.props.data.picsrc} styles={this.chatMessageImageStyle} />
@@ -149,7 +148,6 @@ var ChatFrame = React.createClass({
 
 
 	componentWillMount: function() {
-		console.log('ChatFrameWillMount', this.state);
 		Store.chat.openChannel(this.props.id);
 	},
 
@@ -187,7 +185,7 @@ var ChatFrame = React.createClass({
 		var chats = _.map(this.state.chat.chats, function(v, k) {
 			return (<ChatObject key={'chatobject' + k} data={v} />);
 		});
-		console.log('this.state.chat.users', this.state.chat.users);
+
 		return (
 			<div styles={this.chatBoxStyle}>
 				<ChatUsers users={this.state.chat.users} />

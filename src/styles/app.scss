@@ -174,19 +174,6 @@ a:hover {
 }
 
 .landing {
-	padding: 1em 3em 3em 3em;
-	text-rendering: optimizeLegibility;
-	font-feature-settings: "kern";
-	font-kerning: normal;
-	-webkit-font-feature-settings: "kern";
-	-webkit-font-smoothing: auto;
-	font-family: Helvetica;
-	color: rgba(136, 0, 170, 1);
-	width: 700px;
-	text-align: center;
-	margin: auto;
-	position: relative;
-	background: rgba(179, 205, 224, 1);
 }
 
 .landing input {
@@ -253,10 +240,8 @@ a:hover {
 }
 
 .overmap > header {
-
 	width: 95%;
 	max-width: 69em;
-	margin: 0 auto;
 	padding: 2.875em 1.875em 1.875em;
 }
 .overmap > header > div.left {

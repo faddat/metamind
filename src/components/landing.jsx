@@ -53,57 +53,48 @@ var Landing = React.createClass({
 	render() {
 		var loginForm = {
 			inputs: [
-				{id: "email", label: "Email", type: "email"},
-				{id: "password", label: "Password", type: "password"},
+				{id: 'email', label: 'Email', type: 'email'},
+				{id: 'password', label: 'Password', type: 'password'},
 			],
 			buttons: [
-				{id: "create-btn", text:"Login", loading: this.state.loginLoading},
+				{id: 'create-btn', text:'Login', loading: this.state.loginLoading},
 			]
 		};
 		var registerForm = {
 			inputs: [
-				{id: "email", label: "Email", type: "email"},
-				{id: "password", label: "Password", type: "password"},
-				{id: "password2", label: "Confirm Password", type: "password"},
+				{id: 'email', label: 'Email', type: 'email'},
+				{id: 'password', label: 'Password', type: 'password'},
+				{id: 'password2', label: 'Confirm Password', type: 'password'},
 			],
 			buttons: [
-				{id: "create-btn", text:"Register", loading: this.state.registerLoading},
+				{id: 'create-btn', text:'Register', loading: this.state.registerLoading},
 			]
 		};
 
 		return (
-			<div className='overmap'>
-				<header>
-					<span className='company'>21cdawn</span>
-					<div className='left'>
-						<h1>MetaMind</h1>
-					</div>
-					<div className='right'>
-
+			<div styles={this.styles.landingContainer}>
+				<div styles={this.styles.landing}>
+					<span styles={this.styles.company}>21cdawn</span>
+					<h1 styles={this.styles.title}>MetaMind</h1>
 
 					<div styles={this.styles.morphButton}>
-						<MorphButton ref="login" text="Login" onClick={this.toggleLogin}>
+						<MorphButton ref='login' text='Login' onClick={this.toggleLogin}>
 							<MorphForm
-								title="Login"
+								title='Login'
 								form={loginForm}
 								onSubmit={this.submitLogin}
 								onClose={this.toggleLogin} />
 						</MorphButton>
 					</div>
-					<span styles={this.styles.joiner}> or </span>
 					<div styles={this.styles.morphButton}>
-						<MorphButton ref="register" text="Register" onClick={this.toggleRegister}>
+						<MorphButton ref='register' text='Register' onClick={this.toggleRegister}>
 							<MorphForm
-								title="Register"
+								title='Register'
 								form={registerForm}
 								onSubmit={this.submitRegister}
 								onClose={this.toggleRegister} />
 						</MorphButton>
 					</div>
-					</div>
-					<span className='clear-me'></span>
-				</header>
-				<div className='flex-container'>
 					<span className='clear-me'></span>
 				</div>
 			</div>
@@ -111,11 +102,40 @@ var Landing = React.createClass({
 	},
 
 	styles: {
-		joiner: ReactStyle({
+		landing: ReactStyle({
+			position: 'absolute',
+			top: '-8em',
+			left: 0,
+			right: 0,
+			bottom: 0,
+			height: '10em',
+			textAlign: 'center',
+			margin: 'auto',
 		}),
+		company: ReactStyle({
+			fontFamily: 'Lato,Calibri,Arial,sans-serif',
+			display: 'block',
+			fontWeight: '700',
+			textTransform: 'uppercase',
+			letterSpacing: '0.5em',
+			padding: '0 0 0.6em 0.1em',
+		}),
+
+		title: ReactStyle({
+			margin: '0 0 1em 0',
+			fontSize: '2.125em',
+			fontWeight: '400',
+			lineHeight: '1',
+		}),
+
 		morphButton: ReactStyle({
 			margin: '3px 15px 10px 15px',
-			display: 'inline-block',
+			display: 'block',
+		}),
+		landingContainer: ReactStyle({
+			position: 'relative',
+			width: '100vw',
+			height: '100vh',
 		}),
 
 	},

@@ -26,23 +26,19 @@ _.each(['post', 'get', 'delete', 'put'], (v) => {
             dataType: 'json',
         });
 
-        console.log('_data', _data);
-        console.log('_options', _options);
-
         return qwest[v](hostPath(url), _data, _options);
     }
 });
 
 var logError = function (error) {
     qwest.post('/analytics/error').then((response) => {
-        console.log('response', response);
+
     }).catch((err) => {
-        console.log('log error error =p');
+
     })
 }
 
 function handleApiError(xhr, status, message) {
-    console.log(xhr, status, message);
     if (status == '401') {
         Action.authFail();
         return;
@@ -91,7 +87,6 @@ var Store = {
         connectSocket(token) {
             var ws = new WebSocket(config.socketEndpoint + token);
             window.sjsConnection = new sharejs.Connection(ws);
-            sjsConnection.debug = true;
         },
 
         setAppdata(data) {
@@ -127,6 +122,22 @@ var Store = {
             }).catch(function(message)  {
                 handleApiError(this, this.status, message);
             });
+        },
+
+        logout() {
+            localStorage.removeItem('appdata');
+            delete authData.access_token;
+
+            this.appdata = {
+                user: null,
+                token: {
+                    id: null
+                }
+            };
+
+            sjsConnection.disconnect();
+
+            this.trigger(this.appdata);
         }
     }),
 
@@ -144,10 +155,8 @@ var Store = {
         createMap: function(graph) {
             return new Promise((resolve, reject) => {
                 api.post('/graph', graph).then((res) => {
-                    console.log('res', res);
                     if (res.error) {
                         logError(res.error);
-                        console.log(error);
                         return reject(error);
                     }
 
@@ -166,7 +175,6 @@ var Store = {
             //posting because gets are retarted with qwest
             api.post('/graphlist').then((res) => {
                 if(res.error) {
-                    console.log('error', error);
                     return reject(error);
                 }
                 this.graphs = res.graphs;
@@ -193,7 +201,6 @@ var Store = {
         },
 
         openMap(id) {
-            console.log(id);
             this.doc = sjsConnection.get('graph', id);
 
             this.doc.subscribe();
@@ -201,10 +208,10 @@ var Store = {
 
             this.doc.on('after op', (op, localSite) => {
                 this.docChanged();
-                console.log('this.doc', this.doc);
             });
 
             this.doc.whenReady(() => {
+                console.log('Graph READY ================');
                 Action.docReady(id);
                 this.docChanged();
             });
@@ -212,6 +219,7 @@ var Store = {
 
         closeMap() {
             this.doc.unsubscribe();
+            this.doc.destroy();
         },
 
         docChanged() {
@@ -297,10 +305,10 @@ var Store = {
 
         closeChannel() {
             this.doc.unsubscribe();
+            this.doc.destroy();
         },
 
         docChanged() {
-            console.log('this.doc.snapshot', this.doc.snapshot);
             this.trigger(this.doc.snapshot);
         },
 

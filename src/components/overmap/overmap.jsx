@@ -8,6 +8,8 @@ var React = require('react');
 var Reflux = require('reflux');
 
 var NewMap = require('../component/new-map.jsx');
+var Nav = require('./nav.jsx');
+
 
 var MiniMap = React.createClass({
 	getInitialState: function() {
@@ -167,14 +169,9 @@ var OverMap = React.createClass({
 
 		return (
 			<div className='overmap'>
+				<Nav />
 				<header>
-					<div className='left'>
-						<span className='company'>21cdawn</span>
-						<h1>Bubbles Alpha</h1>
-					</div>
-					<div className='right'>
-						<NewMap ref='newmap' onCreate={this.mapCreated} />
-					</div>
+					<NewMap ref='newmap' onCreate={this.mapCreated} />
 					<span className='clear-me'></span>
 				</header>
 				<div className='flex-container'>

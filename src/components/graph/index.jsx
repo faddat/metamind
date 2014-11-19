@@ -56,7 +56,6 @@ var GraphEditor = React.createClass({
 		}
 	},
 
-
 	componentWillMount: function() {
 		this.fn = this.genFn();
 

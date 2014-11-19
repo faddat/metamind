@@ -30,40 +30,37 @@
   order: $val;
 }
 
-.wrapper {
-  @include flexbox();
-}
-
-.item {
-  @include flex(1 200px);
-  @include order(2);
-}
-
 .flex-container {
-  padding: 0;
-  margin: 0;
+  max-width: 69em;
   list-style: none;
+  margin: 0 auto;
+  width: 95%;
 
   @include flexbox();
   @include flexflow(row wrap);
 
-  justify-content: space-around;
+  justify-content: align-start;
+  align-items: space-around;
 }
 
 .flex-item {
+  @include flex(0 1 200px);
+
   cursor: pointer;
   position: relative;
   background: #3594CB;
   padding: 5px;
   width: 200px;
   height: 150px;
-  margin-top: 10px;
+  margin: 10px 10px;
 
   border: 15px solid #3594CB;
   border-top: 25px solid #3594CB;
   color: white;
   font-weight: bold;
+
   text-align: center;
+
   box-sizing: padding-box;
 }
 
