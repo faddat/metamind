@@ -5,7 +5,6 @@
 'use strict';
 
 var React = require('react');
-var ReactStyle = require('react-style');
 var Reflux = require('reflux');
 
 
@@ -95,7 +94,6 @@ var Landing = React.createClass({
 								onClose={this.toggleRegister} />
 						</MorphButton>
 					</div>
-					<span className='clear-me'></span>
 				</div>
 			</div>
 		);
@@ -109,6 +107,7 @@ var Landing = React.createClass({
 			right: 0,
 			bottom: 0,
 			height: '10em',
+			width: 300,
 			textAlign: 'center',
 			margin: 'auto',
 		}),
@@ -129,9 +128,11 @@ var Landing = React.createClass({
 		}),
 
 		morphButton: ReactStyle({
+			textAlign: 'center',
 			margin: '3px 15px 10px 15px',
 			display: 'block',
 		}),
+
 		landingContainer: ReactStyle({
 			position: 'relative',
 			width: '100vw',

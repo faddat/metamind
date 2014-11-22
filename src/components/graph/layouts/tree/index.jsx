@@ -19,10 +19,11 @@ var Tree = React.createClass({
 	},
 
 	componentDidMount: function() {
-		$('.nodeframe').panzoom({
-			$set: $('.edgepanframe>g, .nodepanframe')
+		var $frame = $(this.refs.nodeFrame.getDOMNode());
+
+		$frame.panzoom({
+			$set: $('#edgePanFrameG, #nodePanFrame')
 		});
-		var $frame = $(this.refs.nodeframe.getDOMNode());
 
 		this.setState({
 			framewidth: $frame.width(),
@@ -35,14 +36,13 @@ var Tree = React.createClass({
 	componentWillReceiveProps: function(nextProps) {
 		if (_.isObject(nextProps.graph)) {
 			var processed = TreeSpread.run(nextProps.graph);
+			console.log('processed.nodes', processed.nodes);
 			this.setState({
 				nodes: processed.nodes,
 				edges: processed.edges
 			});
 		}
 	},
-
-
 
 	handleClick: function(e) {
 		e.preventDefault();
@@ -51,7 +51,7 @@ var Tree = React.createClass({
 	},
 
 	resize: function(ev) {
-		var $frame = $(this.refs.nodeframe.getDOMNode())
+		var $frame = $(this.refs.nodeFrame.getDOMNode())
 		this.setState({
 			framewidth: $frame.width(),
 			frameheight: $frame.height()
@@ -59,14 +59,12 @@ var Tree = React.createClass({
 	},
 
 	render: function() {
-
+		console.log(this.state.nodes);
     	var nodes = this.state.nodes.map(function(v) {
     		return <Node
 	    		key={'node' + v.index}
 	    		node={v}
-				fn={this.fn}
-	    		inputMode={this.state.inputMode}
-	    		selected={this.state.selected == v.id} />;
+	    		selected={this.props.selected == v.id} />;
     	}.bind(this));
 
     	var edgeElems = [];
@@ -89,20 +87,35 @@ var Tree = React.createClass({
     	};
 
 		return (
-			<div className="nodeframe" ref="nodeframe" onClick={this.handleClick}>
-        		<div className="nodepanframe">
+			<div styles={this.styles.nodeFrame} ref="nodeFrame" onClick={this.handleClick}>
+        		<div id="nodePanFrame" styles={this.styles.nodePanFrame}>
 	        		{nodes}
 		     	</div>
-	        	<svg className="edgepanframe" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
+	        	<svg ref="edgePanFrame" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
 	     			version="1.2" baseProfile="tiny" width="100%" height="100%" x="0px" y="0px" viewBox={"0 0 " + this.state.framewidth + " " + this.state.frameheight}>
-	     			<g width="100%" height="100%">
+	     			<g id="edgePanFrameG" width="100%" height="100%">
 	     			{edgeElems}
 	     			</g>
 	     		</svg>
         	</div>
 		);
-	}
+	},
 
+	styles: {
+		nodeFrame: ReactStyle({
+			position: 'fixed',
+			left: 0,
+			top: 0,
+			bottom: 0,
+			right: 0,
+		}),
+		nodePanFrame: ReactStyle({
+			 zIndex: '10',
+		}),
+		edgePanFrame: ReactStyle({
+			 zIndex: '5',
+		}),
+	}
 });
 
 module.exports = Tree;

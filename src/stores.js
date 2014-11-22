@@ -87,6 +87,7 @@ var Store = {
         connectSocket(token) {
             var ws = new WebSocket(config.socketEndpoint + token);
             window.sjsConnection = new sharejs.Connection(ws);
+            // sjsConnection.debug = true;
         },
 
         setAppdata(data) {
@@ -135,7 +136,9 @@ var Store = {
                 }
             };
 
-            sjsConnection.disconnect();
+            if (typeof sjsConnection !== 'undefined') {
+                sjsConnection.disconnect();
+            }
 
             this.trigger(this.appdata);
         }

@@ -42,6 +42,7 @@ var ModalButton = React.createClass({
 });
 
 var MorphForm = React.createClass({
+
     onSubmit: function(ev) {
         ev.preventDefault();
 
@@ -52,6 +53,7 @@ var MorphForm = React.createClass({
 
         this.props.onSubmit(data);
     },
+
     render: function() {
         var inputs = this.props.form.inputs.map(function(v) {
             return <ModalInput key={'modalinput' + v.id} ref={v.id} label={v.label} type={v.type} id={v.id}/>

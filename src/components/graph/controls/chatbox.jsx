@@ -5,7 +5,6 @@
 
 var React = require('react');
 var Reflux = require('reflux');
-var ReactStyle = require('react-style');
 var ChatUsers = require('./chatusers.jsx');
 
 var ChatMessage = React.createClass({

@@ -6,14 +6,13 @@
 
 var React = require('react/addons');
 var Reflux = require('reflux');
-var ReactStyle = require('react-style');
 
 var NavButton = React.createClass({
 	styles: {
 		link: ReactStyle({
 			display: 'inline-block',
 			lineHeight: 43,
-			padding: '0px 16px 0px 27px',
+			padding: '0px 20px',
 			fontWeight: '400',
 			fontSize: '16px',
 			color: '#2384D1',

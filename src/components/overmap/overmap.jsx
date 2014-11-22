@@ -9,6 +9,7 @@ var Reflux = require('reflux');
 
 var NewMap = require('../component/new-map.jsx');
 var Nav = require('./nav.jsx');
+var MorphButton = require('../component/morph-button.jsx');
 
 
 var MiniMap = React.createClass({
@@ -80,6 +81,11 @@ var MiniMap = React.createClass({
      		</svg>
 		);
 	}
+
+	// // node circle
+	// stroke: #AAAAFF;
+	// strokeWidth: 1;
+	// strokeOpacity: 0.5;
 
 });
 
@@ -168,19 +174,26 @@ var OverMap = React.createClass({
 		});
 
 		return (
-			<div className='overmap'>
+			<div styles={this.styles.overmap}>
 				<Nav />
-				<header>
+				<header styles={this.styles.header}>
 					<NewMap ref='newmap' onCreate={this.mapCreated} />
-					<span className='clear-me'></span>
 				</header>
 				<div className='flex-container'>
 					{graphs}
-					<span className='clear-me'></span>
 				</div>
 			</div>
 		);
-	}
+	},
+	styles: {
+		overmap: ReactStyle({
+		}),
+		header: ReactStyle({
+			width: '95%',
+			maxWidth: '69em',
+			padding: '2.875em 1.875em 1.875em',
+		}),
+	},
 });
 
 module.exports = OverMap;

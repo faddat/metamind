@@ -36,7 +36,6 @@ Add transitions to nodes to make them smoothly move around
 var Layout = require('./layouts/tree');
 
 var Nav = require('./controls/nav.jsx');
-var DebugBar = require('./controls/debugbar.jsx');
 var InputBox = require('./controls/inputbox.jsx');
 var ChatFrame = require('./controls/chatbox.jsx');
 
@@ -57,6 +56,11 @@ var GraphEditor = React.createClass({
 	},
 
 	componentWillMount: function() {
+		if (!Store.appdata.isLoggedin()) {
+			Action.authFail();
+			return false;
+		}
+
 		this.fn = this.genFn();
 
 		//Before
@@ -184,22 +188,23 @@ var GraphEditor = React.createClass({
 	},
 
     render: function () {
-    	var style = {
-    		zIndex: 1,
-			width: '100%',
-			height: '100%'
-    	};
-    	console.log('render');
-        return <div ref="app" style={style}>
-        	<Nav shareURL={this.getCurrentPath()}>Share</Nav>
+        return <div ref="app" styles={this.styles.editor}>
+        	<Nav shareURL={hostPath(this.getCurrentPath())}>Share</Nav>
         	<ChatFrame id={this.props.params.id} />
         	<InputBox ref="inputBox" active={this.isSelectMode()} submit={this.handleTextSubmit}/>
 
-        	<Layout graph={this.state.data} />
+        	<Layout graph={this.state.data} selected={this.state.selected} />
 
-     		<DebugBar debug={this.state.debug} />
      		<Loader mode={this.state.loader} onClose={this.loaderOff}/>
         </div>;
+    },
+
+    styles: {
+    	editor: ReactStyle({
+    		zIndex: 1,
+			width: '100%',
+			height: '100%'
+    	}),
     }
 });
 

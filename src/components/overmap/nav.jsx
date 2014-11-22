@@ -6,7 +6,6 @@
 
 var React = require('react/addons');
 var Reflux = require('reflux');
-var ReactStyle = require('react-style');
 
 var Nav = require('../component/nav.jsx');
 

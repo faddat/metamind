@@ -17,7 +17,7 @@ module.exports = {
 			x: 0,
 			y: 0,
 			parent_w: 0,
-			parent_t: 0,
+			direction: 0,
 			weight: 0,
 			text: graphData.nodes['root'].text,
 			style: graphData.nodes['root'].style,
@@ -54,7 +54,7 @@ module.exports = {
 				id: currentEdge.b,
 				index: i + 1,
 				parent_w: 0,
-				parent_t: 0,
+				direction: 0,
 				weight: 0,
 				prev: nodeIndex,
 				prevIndex: renderData.edges[nodeIndex].length - 1
@@ -70,6 +70,10 @@ module.exports = {
 
 
 		};
+
+		_.each(renderData.nodes, (v, k) => {
+			v.style = v.weight == 0 ? 'soft' : 'hard';
+		});
 
 		this.recalcNodes(renderData.nodes, renderData.edges);
 
@@ -154,54 +158,56 @@ module.exports = {
 
 	recalcNodes: function(nodes, edges)
 	{
-		var r, t, tw, r2, w, smallCount, push, bigEdges, smallEdges;
-		var distance = 45;
+		var arc, angle;
 
-		for (var i = 0; i < edges.length; i++) {
-			bigEdges = edges[i].filter(function(v) { return true; });//v.totalweight > 1;});
-			smallEdges = [];//edges[i].filter(function(v) { return v.totalweight == 1;});
-			var smlen = smallEdges.length;
+		var baseDistance = 150;
 
-			if (bigEdges.length > 0) {
-				tw = nodes[i].weight - smlen;
-				push = 0;
-				if (i != 0) {
-					push = (nodes[i].parent_w - nodes[i].weight) / 4;
-					tw += push;
-				}
+		//iterate the tree edges from root to leaves and perform render calculations
+		_.each(edges, (branches, branchKey) => {
+			if (branches.length == 0)
+				return true;
 
-				t = nodes[i].parent_t - 0.5 + (push / 2) / tw;
+			var baseNode = nodes[branchKey];
+			var weightSum = baseNode.weight;
 
-				for (var j = 0; j < bigEdges.length; j++) {
-					r = (bigEdges[j].totalweight / tw) / 2;
-					t += r;
-					var dist = distance + distance * Math.pow(bigEdges[j].totalweight, 0.5);
-					if (nodes[bigEdges[j].next].style == 'light') {
-						nodes[bigEdges[j].next].x = Math.cos(t * 2 * Math.PI) * (dist/2*3) + nodes[i].x;
-						nodes[bigEdges[j].next].y = Math.sin(t * 2 * Math.PI) * (dist/2*3) + nodes[i].y;
-						nodes[bigEdges[j].next].parent_t = t;
-						nodes[bigEdges[j].next].parent_w = nodes[i].weight - smlen;
-					} else {
-						nodes[bigEdges[j].next].x = Math.cos(t * 2 * Math.PI) * (dist) + nodes[i].x;
-						nodes[bigEdges[j].next].y = Math.sin(t * 2 * Math.PI) * (dist) + nodes[i].y;
-						nodes[bigEdges[j].next].parent_t = t;
-						nodes[bigEdges[j].next].parent_w = nodes[i].weight - smlen;
-					}
-					t += r;
+			//narrow branch spread based on weight difference
+			var push = 0;
 
-				};
+			if (baseNode.parent_w > 0) {
+				push = (baseNode.parent_w - baseNode.weight) / 3;
+				weightSum += push;
 			}
 
-			t = nodes[i].parent_t + 0.5;
-			for (var j = smlen - 1; j >= 0; j--) {
-				w = smallEdges[j].totalweight;
-				r = 1 / smlen;
-				var dist = distance*3;
-				nodes[smallEdges[j].next].x = Math.cos((t + r/2) * 2 * Math.PI) * (dist) + nodes[i].x;
-				nodes[smallEdges[j].next].y = Math.sin((t + r/2) * 2 * Math.PI) * (dist) + nodes[i].y;
-				t += r;
-			};
-		};
+			angle = baseNode.direction - 0.5 + (push / 2) / weightSum;
+
+			var offsetX = baseNode.x;
+			var offsetY = baseNode.y;
+
+			//sub-edges
+			_.each(branches, (edge, key) => {
+				//sub-node
+				var childNode = nodes[edge.next];
+				var dist = baseDistance;
+
+				arc = (edge.totalweight / weightSum) / 2;
+				angle += arc;
+
+				if (childNode.style == 'soft') {
+					console.log(childNode);
+					childNode.x = Math.cos(angle * 2 * Math.PI) * (dist) + offsetX;
+					childNode.y = Math.sin(angle * 2 * Math.PI) * (dist) + offsetY;
+					childNode.direction = angle;
+					childNode.parent_w = nodes[key].weight;
+				} else {
+					dist += baseDistance * Math.log(edge.totalweight) / 10;
+					childNode.x = Math.cos(angle * 2 * Math.PI) * (dist) + offsetX;
+					childNode.y = Math.sin(angle * 2 * Math.PI) * (dist) + offsetY;
+					childNode.direction = angle;
+					childNode.parent_w = baseNode.weight;
+				}
+				angle += arc;
+			});
+		});
 	},
 
 };

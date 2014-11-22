@@ -6,11 +6,12 @@
 
 var React = require('react/addons');
 var Reflux = require('reflux');
-var ReactStyle = require('react-style');
 
 var Nav = require('../../component/nav.jsx');
 var NavBar = Nav.NavBar;
 var NavButton = Nav.NavButton;
+var MorphButton = require('../../component/tween-button.jsx');
+var Morph = require('../../component/morph.jsx');
 
 //http://stackoverflow.com/questions/11128130/select-text-in-javascript
 function selectText(element) {
@@ -51,32 +52,6 @@ var Back = React.createClass({
 
 
 var ShareBox = React.createClass({
-	styles: {
-		shareBox: ReactStyle({
-			boxShadow: '0 3px 3px rgba(100, 100, 100, 0.5)',
-			position: 'absolute',
-			top: '100%',
-			right: '0',
-			width: 'auto',
-			cursor: 'caret',
-			zIndex: '2',
-			marginRight: 16,
-			whiteSpace: 'nowrap',
-			padding: 5,
-			border: '1px solid rgba(0,0,0,0.1)',
-			background: 'white',
-		}),
-		backdrop: ReactStyle({
-			position: 'fixed',
-			display: 'block',
-			top: '0',
-			right: '0',
-			width: '100vw',
-			height: '100vh',
-			zIndex: '1',
-		}),
-	},
-
 	getInitialState() {
 		return {
 			visible: false
@@ -109,20 +84,82 @@ var ShareBox = React.createClass({
 			</NavButton>
 		);
 
-	}
+	},
 
+	styles: {
+		shareBox: ReactStyle({
+			boxShadow: '0 3px 3px rgba(100, 100, 100, 0.5)',
+			position: 'absolute',
+			top: '100%',
+			right: '0',
+			width: 'auto',
+			cursor: 'caret',
+			zIndex: '2',
+			marginRight: 16,
+			whiteSpace: 'nowrap',
+			padding: 5,
+			border: '1px solid rgba(0,0,0,0.1)',
+			background: 'white',
+		}),
+		backdrop: ReactStyle({
+			position: 'fixed',
+			display: 'block',
+			top: '0',
+			right: '0',
+			width: '100vw',
+			height: '100vh',
+			zIndex: '1',
+		}),
+	},
 });
 
 
 
 var GraphNav = React.createClass({
+
+	helpToggle() {
+		this.refs.help.toggle();
+	},
+
 	render() {
 		return (<NavBar>
 				<Back />
+
+				<MorphButton ref="help" text="?" onClick={this.helpToggle}>
+					<Morph styles={[this.styles.readme]}>
+						<h2 styles={this.styles.h2}>Read Me</h2>
+						<ul styles={this.styles.ul}>
+							<li>MOUSE: Select Nodes</li>
+							<li>TAB: Branch Node</li>
+							<li>ENTER: Write Stuff in Nodes</li>
+						</ul>
+					</Morph>
+				</MorphButton>
+
 				<ShareBox shareURL={this.props.shareURL}/>
 			</NavBar>
 		);
-	}
+	},
+	styles: {
+		readme: ReactStyle({
+            padding: '10px 30px 30px 30px',
+			// width: 300,
+		}),
+
+		h2: ReactStyle({
+            margin: 0,
+            padding: '0.4em 0 0.3em',
+            textAlign: 'center',
+            fontWeight: '300',
+            fontSize: '3.5em',
+		}),
+		ul: ReactStyle({
+            padding: '10px',
+            width: 300,
+            listStyle: 'initial',
+            lineHeight: '1.7em',
+		}),
+	},
 })
 
 module.exports = GraphNav;

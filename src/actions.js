@@ -9,15 +9,12 @@ var Reflux = require('reflux');
 // var textUpdate = Reflux.createAction();
 
 var Actions = Reflux.createActions([
-    'openOverview',
 
     'createMap',
     'deleteMap',
 
 
 	'docReady',
-	'docChanged',
-
 	'chatReady',
 
 	'authFail',

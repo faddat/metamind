@@ -14,11 +14,12 @@ window.DefaultRoute = ReactRouter.DefaultRoute;
 window.NotFoundRoute = ReactRouter.NotFoundRoute;
 window.Link = ReactRouter.Link;
 window.Navigation = ReactRouter.Navigation;
+window.ReactStyle = require('react-style');
 
 var OverMap = require('./overmap/overmap.jsx');
 var Graph = require('./graph');
 var Landing = require('./landing');
-
+var Debug = require('./component/debug-bar.jsx');
 
 var HomePage = React.createClass({
   mixins: [Reflux.ListenerMixin, Navigation],
@@ -35,10 +36,18 @@ var HomePage = React.createClass({
   },
 
   render() {
-    return (<div>
-      <this.props.activeRouteHandler />
-    </div>);
-  }
+    return (<div styles={this.styles.page}>
+        <this.props.activeRouteHandler />
+        <Debug />
+      </div>);
+  },
+
+  styles: {
+    page: ReactStyle({
+      width: '100%',
+      height: '100%',
+    }),
+  },
 });
 
 
@@ -56,5 +65,4 @@ var routes = (
 
 module.exports = () => {
   React.renderComponent(routes, document.getElementById('app'));
-  Action.openOverview();
 };
