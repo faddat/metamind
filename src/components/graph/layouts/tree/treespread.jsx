@@ -160,7 +160,7 @@ module.exports = {
 	{
 		var arc, angle;
 
-		var baseDistance = 150;
+		var baseDistance = 120;
 
 		//iterate the tree edges from root to leaves and perform render calculations
 		_.each(edges, (branches, branchKey) => {

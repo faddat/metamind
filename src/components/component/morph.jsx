@@ -11,10 +11,12 @@ var Morph = React.createClass({
     },
 
     styles: {
+
         dialog: ReactStyle({
             position:'relative',
             textAlign: 'left',
         }),
+
         close: ReactStyle({
             top: 0,
             right: 0,
@@ -24,6 +26,7 @@ var Morph = React.createClass({
                 color: '#6cbfee',
             },
         }),
+
     },
 });
 

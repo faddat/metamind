@@ -33,8 +33,7 @@ var MorphButton = React.createClass({
 		var rect = open ? button.getBoundingClientRect() : this.state.rect;
 
 		//refresh inner rect incase size changed externally
-		var innerRect = this.state.innerRect;//open ? inner.getBoundingClientRect() : this.state.innerRect;
-		var innerRect = this.state.innerRect;//open ? inner.getBoundingClientRect() : this.state.innerRect;
+		var innerRect = this.state.innerRect;
 
 		console.log('rect', rect);
 		console.log('innerRect', innerRect);

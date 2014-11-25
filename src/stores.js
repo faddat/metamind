@@ -8,14 +8,6 @@ var authData = {};
 
 var api = {};
 
-
-  // componentDidMount() {
-  //   this.listenTo(Action.authFail, this.onAuthFail);
-  // },
-
-  // onAuthFail() {
-  //   document.location.href = '/';
-  // },
 _.each(['post', 'get', 'delete', 'put'], (v) => {
     api[v] = function(url, data, options) {
         var _data = typeof data !== 'object' ? {} : data;
@@ -54,12 +46,20 @@ var Store = {
             }
         },
 
-        getDefaultData() {
-            return this.appdata;
+        init() {
+        	//Remembered Auth Token + AppData
+	        var stored = this.storedData();
+	        if (stored) {
+	            this.setAppdata(stored);
+	        	this.connectSocket(this.appdata.token.id);
+	        } else {
+	        	this.connectSocket();
+	        }
+
         },
 
-        isLoggedin() {
-            return this.validate(this.appdata);
+        getDefaultData() {
+            return this.appdata;
         },
 
         validate(data) {
@@ -85,9 +85,23 @@ var Store = {
         },
 
         connectSocket(token) {
-            var ws = new WebSocket(config.socketEndpoint + token);
+        	//TODO extract and encapsulate stream logic somewhere else
+        	//use global app init actions to trigger creation
+        	this.disconnectSocket();
+        	var ws = null;
+        	if (typeof token === 'string') {
+            	ws = new WebSocket(config.socketEndpoint + token);
+        	} else {
+        		ws = new WebSocket(config.socketEndpoint);
+        	}
             window.sjsConnection = new sharejs.Connection(ws);
             // sjsConnection.debug = true;
+        },
+
+        disconnectSocket() {
+            if (typeof sjsConnection !== 'undefined') {
+                sjsConnection.disconnect();
+            }
         },
 
         setAppdata(data) {
@@ -100,14 +114,14 @@ var Store = {
             this.trigger(this.appdata);
         },
 
+        isLoggedin() {
+            return this.validate(this.appdata);
+        },
+
+
+        //Call Server
+        //TODO move login/register/logout
         login(data) {
-            var stored = this.storedData();
-
-            if (stored) {
-                this.setAppdata(stored);
-                return;
-            }
-
             api.post('/login', data).then((res) => {
                 this.setAppdata(res);
             }).catch(function(message)  {
@@ -136,9 +150,7 @@ var Store = {
                 }
             };
 
-            if (typeof sjsConnection !== 'undefined') {
-                sjsConnection.disconnect();
-            }
+            this.disconnectSocket();
 
             this.trigger(this.appdata);
         }
@@ -204,10 +216,11 @@ var Store = {
         },
 
         openMap(id) {
-            this.doc = sjsConnection.get('graph', id);
+            this.doc = sjsConnection.get('graph', id, () => {
+            	console.log('cb?')
+            });
 
             this.doc.subscribe();
-
 
             this.doc.on('after op', (op, localSite) => {
                 this.docChanged();
@@ -249,6 +262,21 @@ var Store = {
             return {p:['nodes', id], od: this.doc.snapshot.nodes[id], oi:node};
         },
 
+		// Build op to delete a node
+        _nodeDeleteOp(id, node) {
+            return {p:['nodes', id], od: this.doc.snapshot.nodes[id]};
+        },
+
+		// Build op to delete a edge
+        _edgeDeleteOp(id) {
+        	var index = -1;
+        	var edge = _.find(this.doc.snapshot.edges, (v, k) => {
+        		index = k;
+        		return v.b == id;
+        	});
+        	console.log(edge);
+            return {p:['edges', index], ld: edge};
+        },
         // Create a new node
         // key as a unique string id, node as { text }, edge as { a, b }
         newNode(key, node, edge) {
@@ -271,7 +299,16 @@ var Store = {
                 this._nodeUpdateOp(id, node)
             ];
             this.doc.submitOp(op);
-        }
+        },
+
+        // Delete node
+        deleteNode(id) {
+            var op = [
+                this._edgeDeleteOp(id),
+                this._nodeDeleteOp(id),
+            ];
+            this.doc.submitOp(op);
+        },
     }),
 
 

@@ -126,7 +126,7 @@ var GraphNav = React.createClass({
 				<Back />
 
 				<MorphButton ref="help" text="?" onClick={this.helpToggle}>
-					<Morph styles={[this.styles.readme]}>
+					<Morph styles={[this.styles.readme]} onClose={this.helpToggle}>
 						<h2 styles={this.styles.h2}>Read Me</h2>
 						<ul styles={this.styles.ul}>
 							<li>MOUSE: Select Nodes</li>

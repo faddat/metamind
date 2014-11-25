@@ -11,19 +11,19 @@ var NewMap = require('../component/new-map.jsx');
 var Nav = require('./nav.jsx');
 var MorphButton = require('../component/morph-button.jsx');
 
+var Auth = require('../../mixins/auth');
 
 var MiniMap = React.createClass({
+
 	getInitialState: function() {
 		return {
 			nodes: [],
 			edges: []
 		};
 	},
+
 	componentWillMount: function() {
-		// var state = JSON.parse(localStorage.getItem(this.props.id));
-		if (typeof state === 'undefined' || !state || typeof state.nodes === 'undefined' || state.nodes.length == 0)
-			return;
-		this.setState(state);
+
 	},
 
 	renderMap: function() {
@@ -137,7 +137,7 @@ var OverMapNode = React.createClass({
 });
 
 var OverMap = React.createClass({
-    mixins: [Reflux.connect(Store.maps, 'graphs'), Navigation],
+    mixins: [Reflux.connect(Store.maps, 'graphs'), Navigation, Auth],
 	gridster: null,
 
 	getInitialState: function() {
