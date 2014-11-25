@@ -27,3 +27,16 @@ var HomePage = require('./components/index.jsx');
 
 ReactStyle.inject();
 HomePage();
+
+
+// var _NOTA = {
+//    project: "1bd01218-eefb-40b4-8d8c-18f8c7e811fb",
+//    projectProtocol: "http",
+//    appDomain: "beta.nota.io"
+// };
+
+// (function() {;
+//    var n = document.createElement("script"); n.type = "text/javascript"; n.async = true;
+//    n.src = ("https:" == document.location.protocol ? "https://" : "http://") + "beta.nota.io/scripts/build/client/client.bootstrap.js";
+//    var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(n, s);
+// })();

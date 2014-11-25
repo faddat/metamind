@@ -38,7 +38,6 @@ var Node = React.createClass({
 			styles.push[this.styles.selected];
 		}
 
-		console.log('this.props.node.style', this.props.node.style);
 
 		return (
 

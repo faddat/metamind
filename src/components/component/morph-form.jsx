@@ -64,7 +64,7 @@ var MorphForm = React.createClass({
         });
 
         return (
-            <div className='content-style-form'>
+            <div className='content-style-form' styles={this.styles.morphForm}>
                 <span className='icon icon-close' onClick={this.props.onClose}>Close the dialog</span>
                 <h2>{this.props.title}</h2>
                 <form action='' ref='form' id='loginform' onSubmit={this.onSubmit}>
@@ -73,7 +73,14 @@ var MorphForm = React.createClass({
                     {buttons}
                 </form>
             </div>);
-    }
+    },
+
+    styles: {
+    	morphForm: ReactStyle({
+    		width: 400,
+    		margin: 0,
+    	}),
+    },
 });
 
 module.exports = MorphForm;

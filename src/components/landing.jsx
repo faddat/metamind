@@ -8,7 +8,7 @@ var React = require('react');
 var Reflux = require('reflux');
 
 
-var MorphButton = require('./component/morph-button.jsx');
+var MorphButton = require('./component/tween-button.jsx');
 var MorphForm = require('./component/morph-form.jsx');
 
 
@@ -111,25 +111,29 @@ var Landing = React.createClass({
 			textAlign: 'center',
 			margin: 'auto',
 		}),
+
 		company: ReactStyle({
 			fontFamily: 'Lato,Calibri,Arial,sans-serif',
 			display: 'block',
 			fontWeight: '700',
 			textTransform: 'uppercase',
 			letterSpacing: '0.5em',
-			padding: '0 0 0.6em 0.1em',
+			textAlign: 'center',
+			padding: '0 0 0.6em 0',
 		}),
 
 		title: ReactStyle({
+			letterSpacing: '0.1em',
 			margin: '0 0 1em 0',
 			fontSize: '2.125em',
 			fontWeight: '400',
+			textAlign: 'center',
 			lineHeight: '1',
 		}),
 
 		morphButton: ReactStyle({
 			textAlign: 'center',
-			margin: '3px 15px 10px 15px',
+			margin: '3px 0 10px 0',
 			display: 'block',
 		}),
 

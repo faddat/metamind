@@ -42,12 +42,8 @@ var NavButton = React.createClass({
 var NavBar = React.createClass({
 	styles: {
 		nav: ReactStyle({
-			position: 'absolute',
-			top: 0,
-			right: 0,
-			transform: 'translate3d(0,0,0)',
+			float: 'right',
 			height: 44,
-			zIndex: '15',
 		}),
 	},
 

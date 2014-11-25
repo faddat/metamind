@@ -26,4 +26,9 @@ Actions.graph = Reflux.createActions([
 	'editNode',
 ]);
 
+Actions.backdrop = Reflux.createActions([
+	'open',
+	'close',
+]);
+
 module.exports = Actions;

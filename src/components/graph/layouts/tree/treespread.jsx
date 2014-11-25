@@ -193,7 +193,6 @@ module.exports = {
 				angle += arc;
 
 				if (childNode.style == 'soft') {
-					console.log(childNode);
 					childNode.x = Math.cos(angle * 2 * Math.PI) * (dist) + offsetX;
 					childNode.y = Math.sin(angle * 2 * Math.PI) * (dist) + offsetY;
 					childNode.direction = angle;

@@ -20,6 +20,8 @@ var OverMap = require('./overmap/overmap.jsx');
 var Graph = require('./graph');
 var Landing = require('./landing');
 var Debug = require('./component/debug-bar.jsx');
+var Util = require('./util.jsx');
+
 
 var HomePage = React.createClass({
   mixins: [Reflux.ListenerMixin, Navigation],
@@ -31,6 +33,7 @@ var HomePage = React.createClass({
   render() {
     return (<div styles={this.styles.page}>
         <this.props.activeRouteHandler />
+        <Util />
         <Debug />
       </div>);
   },

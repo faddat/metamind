@@ -59,7 +59,8 @@ var Tree = React.createClass({
 	},
 
 	render: function() {
-		console.log(this.state.nodes);
+		//todo fix all the rerendering on resize, clicking shit
+		//todo optimize node modifies to not recalc EVERYthing
     	var nodes = this.state.nodes.map(function(v) {
     		return <Node
 	    		key={'node' + v.index}
@@ -104,7 +105,7 @@ var Tree = React.createClass({
 	styles: {
 		nodeFrame: ReactStyle({
 			position: 'fixed',
-			left: 0,
+			left: 265,
 			top: 0,
 			bottom: 0,
 			right: 0,

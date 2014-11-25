@@ -120,22 +120,49 @@ var GraphEditor = React.createClass({
 	},
 
     render () {
-        return <div ref="app" styles={this.styles.editor}>
-        	<Nav shareURL={hostPath(this.getCurrentPath())}>Share</Nav>
-        	<ChatFrame id={this.props.params.id} />
-        	<InputBox active={this.isSelectMode()} />
+    	if (Store.appdata.isLoggedin()) {
+    		var controls = <EditInterface id={this.props.params.id} />
+		} else {
+    		var controls = <ViewInterface id={this.props.params.id} />
+		}
 
+        return <div ref="app" styles={this.styles.editor}>
         	<Layout graph={this.state.data} selected={this.state.selected} />
+        	{controls}
         </div>;
     },
 
     styles: {
     	editor: ReactStyle({
-    		zIndex: 1,
 			width: '100%',
 			height: '100%'
     	}),
     }
+});
+
+var ViewInterface = React.createClass({
+	render() {
+		return (
+			<div>
+	        	<ChatFrame id={this.props.id} readonly />
+			</div>
+		);
+	},
+});
+
+var EditInterface = React.createClass({
+	mixins: [ReactRouter.CurrentPath],
+
+	render: function() {
+		return (
+			<div>
+	        	<Nav shareURL={hostPath(this.getCurrentPath())}>Share</Nav>
+	        	<ChatFrame id={this.props.id} />
+	        	<InputBox />
+        	</div>
+		);
+	}
+
 });
 
 module.exports = GraphEditor;

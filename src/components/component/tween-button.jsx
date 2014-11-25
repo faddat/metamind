@@ -12,9 +12,11 @@ var MorphButton = React.createClass({
 			rect: null,
 			innerRect: null,
 			tweenage: 0,
+			innerTweenage: 0,
+			buttonTweenage: 1,
 		};
 	},
-	componentDidMount: function() {
+	componentDidMount() {
 		var button = this.refs.button.getDOMNode();
 		var inner = this.refs.inner.getDOMNode();
 
@@ -24,8 +26,20 @@ var MorphButton = React.createClass({
 		});
 		console.log('this.state', this.state);
 	},
+
+	componentWillUnmount() {
+		if (this.state.open) {
+			Action.backdrop.close(100);
+		}
+	},
+
 	toggle() {
 		var open = !this.state.open;
+		if (open) {
+			Action.backdrop.open();
+		} else {
+			Action.backdrop.close();
+		}
 
 		var button = this.refs.button.getDOMNode();
 		var inner = this.refs.inner.getDOMNode();
@@ -39,9 +53,21 @@ var MorphButton = React.createClass({
 		console.log('innerRect', innerRect);
 
 		this.tweenState('tweenage', {
-	      easing: tweenState.easingTypes.easeInOutQuad,
+	      easing: tweenState.easingTypes.easing,
 	      duration: 300,
 	      endValue: this.state.tweenage == 1 ? 0 : 1,
+	    });
+	    this.tweenState('buttonTweenage', {
+	      easing: tweenState.easingTypes.linear,
+	      delay: 200,
+	      duration: 200,
+	      endValue: this.state.buttonTweenage == 1 ? 0 : 1,
+	    });
+	    this.tweenState('innerTweenage', {
+	      easing: tweenState.easingTypes.easing,
+	      delay: this.state.innerTweenage == 1 ? 0 : 200,
+	      duration: this.state.innerTweenage == 1 ? 100 : 200,
+	      endValue: this.state.innerTweenage == 1 ? 0 : 1,
 	    });
 
 	      // easing: easingFunction,
@@ -66,8 +92,11 @@ var MorphButton = React.createClass({
 	render: function() {
 
 		var tweenage = this.getTweeningValue('tweenage');
+		var buttonTweenage = this.getTweeningValue('buttonTweenage');
+		var innerTweenage = this.getTweeningValue('innerTweenage');
 		var tweenStyle = null;
 		var innerStyle = null;
+		var buttonStyle = null;
 
 		if (this.state.rect != null && tweenage != 0) {
 			var rect = this.state.rect;
@@ -76,8 +105,8 @@ var MorphButton = React.createClass({
 			var transform = [];
 			var scaleX = this.lerp(rect.width/innerRect.width, 1, tweenage);
 			var scaleY = this.lerp(rect.height/innerRect.height, 1, tweenage);
-			var x = this.lerp(0, ( - rect.left + (window.innerWidth - innerRect.width) / 2), tweenage);
-			var y = this.lerp(0, ( - rect.top + ( window.innerHeight - innerRect.height) / 2), tweenage);
+			var x = Math.ceil(this.lerp(0, ( - rect.left + (window.innerWidth - innerRect.width) / 2), tweenage));
+			var y = Math.ceil(this.lerp(0, ( - rect.top + ( window.innerHeight - innerRect.height) / 2), tweenage));
 
 
 			transform = [
@@ -95,52 +124,60 @@ var MorphButton = React.createClass({
 	        });
 
 	        innerStyle = ReactStyle({
-	        	opacity: tweenage,
+	        	opacity: innerTweenage,
+	        });
+
+	        buttonStyle = ReactStyle({
+	        	opacity: this.state.open ? 0 : buttonTweenage,
 	        });
 
 		} else {
 
 		}
 
-
+		var propStyle = ReactStyle(this.props.style);
 
 		return (
 			<div styles={this.styles.tweenButton}>
 				<div styles={[this.styles.morpher, tweenStyle]}>
 					<div ref='inner' styles={[this.styles.inner, innerStyle]}>{this.props.children}</div>
 				</div>
-				<a ref='button' onClick={this.toggle} styles={[this.styles.button]}>
+				<button ref='button' onClick={this.toggle} styles={[this.styles.button, buttonStyle, propStyle]}>
 					{this.props.text}
-				</a>
+				</button>
 			</div>
 		);
 	},
 
 	styles: {
 		tweenButton: ReactStyle({
-			 display: 'inline-block',
-			 position: 'relative',
+			display: 'inline-block',
+			position: 'relative',
 		}),
+
 		button: ReactStyle({
+			width: 300,
+			height: '100%',
+
+			padding: '0 1em',
+			border: 'none',
+			backgroundColor: '#3594cb',
+			color: '#f9f6e5',
+			textTransform: 'uppercase',
+			letterSpacing: '1px',
+			fontWeight: '700',
+			lineHeight: '40px',
+			overflow: 'hidden',
 
 			display: 'inline-block',
-			lineHeight: 43,
-			padding: '0px 20px',
-			fontWeight: '400',
-			fontSize: '16px',
-			color: '#2384D1',
-			textOverflow: 'ellipsis',
-			whiteSpace: 'nowrap',
-			cursor: 'pointer',
-
-
-			// height: '100%',
-			zIndex: 1000,
 			cursor: 'pointer',
 
 		}),
 
 		morpher: ReactStyle({
+			minWidth: 300,
+			zIndex: '1000',
+
 			backgroundColor: '#3594cb',
 			position: 'absolute',
 			visibility: 'hidden',

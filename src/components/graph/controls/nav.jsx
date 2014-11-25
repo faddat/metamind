@@ -94,7 +94,7 @@ var ShareBox = React.createClass({
 			right: '0',
 			width: 'auto',
 			cursor: 'caret',
-			zIndex: '2',
+			zIndex: '10',
 			marginRight: 16,
 			whiteSpace: 'nowrap',
 			padding: 5,
@@ -122,10 +122,14 @@ var GraphNav = React.createClass({
 	},
 
 	render() {
-		return (<NavBar>
-				<Back />
+		var morphButtonStyle = {fontWeight: 'bold', width: 25, height: 25, borderRadius: 20, lineHeight: 1, padding: 0, margin: '0 15px 0 12px'};
 
-				<MorphButton ref="help" text="?" onClick={this.helpToggle}>
+		return (
+			<NavBar>
+				<Back />
+				<ShareBox shareURL={this.props.shareURL}/>
+
+				<MorphButton ref="help" text="?" onClick={this.helpToggle} style={morphButtonStyle}>
 					<Morph styles={[this.styles.readme]} onClose={this.helpToggle}>
 						<h2 styles={this.styles.h2}>Read Me</h2>
 						<ul styles={this.styles.ul}>
@@ -136,7 +140,6 @@ var GraphNav = React.createClass({
 					</Morph>
 				</MorphButton>
 
-				<ShareBox shareURL={this.props.shareURL}/>
 			</NavBar>
 		);
 	},

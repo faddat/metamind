@@ -10,6 +10,12 @@ var Reflux = require('reflux');
 var InputBox = React.createClass({
 	mixins: [Reflux.ListenerMixin],
 
+	getInitialState: function() {
+		return {
+			active: false,
+		};
+	},
+
 	styles: {
 
 		inputbox: ReactStyle({
@@ -48,7 +54,7 @@ var InputBox = React.createClass({
 		Mousetrap.bind(['enter'], (e) => {
 			e.preventDefault();
 
-			if (this.props.active) {
+			if (this.state.active) {
 				Action.graph.editNode(this.getText());
 				Action.graph.deselectNode();
 				this.setText('');
@@ -59,17 +65,17 @@ var InputBox = React.createClass({
 	onSelectNode(id) {
 		if (id) {
 			this.setText(Store.mapdata.doc.snapshot.nodes[id].text);
+			this.setState({
+				active: true
+			});
 			this.focus();
 		}
 	},
 
 	onDeselectNode() {
-
-	},
-
-	componentDidUpdate: function() {
-		if (this.props.active) {
-		}
+		this.setState({
+			active: false
+		});
 	},
 
 	focus: function() {
@@ -91,7 +97,7 @@ var InputBox = React.createClass({
 
 	render: function() {
 		var styles = {
-			display: this.props.active ? 'block' : 'none'
+			display: this.state.active ? 'block' : 'none'
 		}
 		return (<div styles={this.styles.inputbox} style={styles}>
 			<input styles={this.styles.inputelement} onClick={this.onClick} className="mousetrap" value={this.props.text} ref="input" type="text" id="input-box"/>
