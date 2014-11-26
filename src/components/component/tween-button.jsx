@@ -16,6 +16,7 @@ var MorphButton = React.createClass({
 			buttonTweenage: 1,
 		};
 	},
+
 	componentDidMount() {
 		var button = this.refs.button.getDOMNode();
 		var inner = this.refs.inner.getDOMNode();
@@ -24,7 +25,15 @@ var MorphButton = React.createClass({
 			rect: button.getBoundingClientRect(),
 			innerRect: inner.getBoundingClientRect(),
 		});
+
 		console.log('this.state', this.state);
+	},
+
+	componentDidUpdate: function(prevProps, prevState) {
+		if (prevState.rect == null && this.props.first && !this.state.open) {
+			console.log('AUTO OPEN');
+			this.toggle();
+		}
 	},
 
 	componentWillUnmount() {

@@ -153,7 +153,24 @@ var Store = {
             this.disconnectSocket();
 
             this.trigger(this.appdata);
-        }
+        },
+
+        isHelpSeen() {
+        	if (typeof this.appdata.user.first_login === 'undefined')
+        		return true;
+
+        	return this.appdata.user.first_login == false;
+        },
+
+        setHelpSeen() {
+            api.post('/user/setHelpSeen').then((res) => {
+                console.log('res', res);
+                this.appdata.user.first_login = false;
+	            localStorage.setItem('appdata', JSON.stringify(this.appdata));
+            }).catch(function(message)  {
+                handleApiError(this, this.status, message);
+            });
+        },
     }),
 
 

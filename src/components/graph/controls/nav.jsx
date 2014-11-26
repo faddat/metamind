@@ -121,6 +121,14 @@ var GraphNav = React.createClass({
 		this.refs.help.toggle();
 	},
 
+	onClose() {
+		this.refs.help.toggle();
+
+		if (!Store.appdata.isHelpSeen()) {
+			Store.appdata.setHelpSeen();
+		}
+	},
+
 	render() {
 		var morphButtonStyle = {fontWeight: 'bold', width: 25, height: 25, borderRadius: 20, lineHeight: 1, padding: 0, margin: '0 15px 0 12px'};
 
@@ -129,8 +137,8 @@ var GraphNav = React.createClass({
 				<Back />
 				<ShareBox shareURL={this.props.shareURL}/>
 
-				<MorphButton ref="help" text="?" onClick={this.helpToggle} style={morphButtonStyle}>
-					<Morph styles={[this.styles.readme]} onClose={this.helpToggle}>
+				<MorphButton ref="help" text="?" onClick={this.helpToggle} style={morphButtonStyle} first={!Store.appdata.isHelpSeen()}>
+					<Morph styles={[this.styles.readme]} onClose={this.onClose}>
 						<h2 styles={this.styles.h2}>Read Me</h2>
 						<ul styles={this.styles.ul}>
 							<li>MOUSE: Select Nodes</li>

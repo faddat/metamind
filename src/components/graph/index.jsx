@@ -156,7 +156,7 @@ var EditInterface = React.createClass({
 	render: function() {
 		return (
 			<div>
-	        	<Nav shareURL={hostPath(this.getCurrentPath())}>Share</Nav>
+	        	<Nav ref="graphnav" shareURL={hostPath(this.getCurrentPath())}>Share</Nav>
 	        	<ChatFrame id={this.props.id} />
 	        	<InputBox />
         	</div>

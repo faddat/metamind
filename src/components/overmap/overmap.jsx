@@ -138,7 +138,6 @@ var OverMapNode = React.createClass({
 
 var OverMap = React.createClass({
     mixins: [Reflux.connect(Store.maps, 'graphs'), Navigation, Auth],
-	gridster: null,
 
 	getInitialState: function() {
 		return {
@@ -152,7 +151,7 @@ var OverMap = React.createClass({
 
 	mapCreated: function(graph) {
 		this.refs.newmap.toggle();
-		this.transitionTo('/app/graph/:id', {id: child.props.map.id});
+		this.transitionTo('/app/graph/:id', {id: graph.id});
 
 	},
 
