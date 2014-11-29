@@ -117,7 +117,7 @@ var ChatMessage = React.createClass({
 });
 
 var ChatFrame = React.createClass({
-    mixins: [Reflux.connect(Store.appdata, "appdata"), Reflux.connect(Store.chat, "chat"), Navigation],
+    mixins: [Reflux.connect(api.auth, "appdata"), Reflux.connect(rt.chat, "chat"), Navigation],
 
 
     getInitialState: function() {
@@ -209,11 +209,11 @@ var ChatFrame = React.createClass({
 	}),
 
 	componentWillMount: function() {
-		Store.chat.openChannel(this.props.id);
+		rt.chat.openChannel(this.props.id);
 	},
 
 	componentWillUnmount: function() {
-		Store.chat.closeChannel();
+		rt.chat.closeChannel();
 	},
 
 	componentDidUpdate: function() {
@@ -227,7 +227,7 @@ var ChatFrame = React.createClass({
 	},
 
 	onSubmit: function(e) {
-		Store.chat.create({
+		rt.chat.create({
 			user: this.state.appdata.user.id,
 			t: 1,
 			text: this.refs.chatinput.getDOMNode().value,

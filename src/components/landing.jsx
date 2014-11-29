@@ -13,7 +13,7 @@ var MorphForm = require('./component/morph-form.jsx');
 
 
 var Landing = React.createClass({
-    mixins: [Reflux.connect(Store.appdata, 'appdata'), Navigation],
+    mixins: [Reflux.connect(api.auth, 'appdata'), Navigation],
 
 	getInitialState() {
 		return {
@@ -42,11 +42,11 @@ var Landing = React.createClass({
 	},
 
 	submitLogin(data) {
-		Store.appdata.login(data);
+		api.auth.login(data);
 	},
 
 	submitRegister(data) {
-		Store.appdata.register(data);
+		api.auth.register(data);
 	},
 
 	render() {

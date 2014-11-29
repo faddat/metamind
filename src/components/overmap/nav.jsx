@@ -16,7 +16,7 @@ var Logout = React.createClass({
 	mixins: [Navigation],
 
 	onClick(e) {
-		Store.appdata.logout();
+		api.auth.logout();
 		this.transitionTo('/');
 		e.preventDefault();
 		e.stopPropagation();

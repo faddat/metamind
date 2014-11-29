@@ -1,11 +1,11 @@
 
 var Auth = {
   componentWillMount: function() {
-    this.authFail = Action.authFail.listen(this.onAuthFail);
+    this.authFail = actions.authFail.listen(this.onAuthFail);
 
   	console.log('Auth Check');
-	if (!Store.appdata.isLoggedin()) {
-		Action.authFail();
+	if (!api.auth.isLoggedin()) {
+		actions.authFail();
 		return false;
 	}
 

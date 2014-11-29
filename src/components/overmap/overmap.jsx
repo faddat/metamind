@@ -137,7 +137,7 @@ var OverMapNode = React.createClass({
 });
 
 var OverMap = React.createClass({
-    mixins: [Reflux.connect(Store.maps, 'graphs'), Navigation, Auth],
+    mixins: [Reflux.connect(api.graph, 'graphs'), Navigation, Auth],
 
 	getInitialState: function() {
 		return {
@@ -146,7 +146,7 @@ var OverMap = React.createClass({
 	},
 
 	componentDidMount: function() {
-		Store.maps.getMaps();
+		api.graph.getGraphs();
 	},
 
 	mapCreated: function(graph) {

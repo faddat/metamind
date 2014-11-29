@@ -14,7 +14,7 @@ var BackDrop = React.createClass({
 
 	componentDidMount() {
 
-		this.listenTo(Action.backdrop.open, () => {
+		this.listenTo(actions.backdrop.open, () => {
 			this.setState({
 				visible: 'visible'
 			});
@@ -27,7 +27,7 @@ var BackDrop = React.createClass({
 
 		});
 
-		this.listenTo(Action.backdrop.close, (duration) => {
+		this.listenTo(actions.backdrop.close, (duration) => {
 			this.tweenState('opacity', {
 		      easing: tweenState.easingTypes.easeInOutQuad,
 		      duration: duration ? duration: 500,

@@ -3,32 +3,17 @@
 var Reflux = require('reflux');
 
 
-
-// Creating an Action
-
-// var textUpdate = Reflux.createAction();
-
-var Actions = Reflux.createActions([
-
-    'createMap',
-    'deleteMap',
-
-
-	'docReady',
-	'chatReady',
-
+global.actions = Reflux.createActions([
 	'authFail',
 ]);
 
-Actions.graph = Reflux.createActions([
+global.actions.graph = Reflux.createActions([
 	'selectNode',
 	'deselectNode',
 	'editNode',
 ]);
 
-Actions.backdrop = Reflux.createActions([
+global.actions.backdrop = Reflux.createActions([
 	'open',
 	'close',
 ]);
-
-module.exports = Actions;

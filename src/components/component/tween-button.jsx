@@ -38,16 +38,16 @@ var MorphButton = React.createClass({
 
 	componentWillUnmount() {
 		if (this.state.open) {
-			Action.backdrop.close(100);
+			actions.backdrop.close(100);
 		}
 	},
 
 	toggle() {
 		var open = !this.state.open;
 		if (open) {
-			Action.backdrop.open();
+			actions.backdrop.open();
 		} else {
-			Action.backdrop.close();
+			actions.backdrop.close();
 		}
 
 		var button = this.refs.button.getDOMNode();

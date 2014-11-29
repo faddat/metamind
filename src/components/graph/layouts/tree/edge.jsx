@@ -31,7 +31,7 @@ var Edge = React.createClass({
 		soft: ReactStyle({
 			stroke: '#76769C',
 			strokeWidth: '2',
-			strokeOpacity: '0.4',
+			strokeOpacity: '1',
 		}),
 	}
 });

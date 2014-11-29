@@ -48,15 +48,15 @@ var InputBox = React.createClass({
 	},
 
 	componentDidMount: function() {
-		this.listenTo(Action.graph.selectNode, this.onSelectNode);
-		this.listenTo(Action.graph.deselectNode, this.onDeselectNode);
+		this.listenTo(actions.graph.selectNode, this.onSelectNode);
+		this.listenTo(actions.graph.deselectNode, this.onDeselectNode);
 
 		Mousetrap.bind(['enter'], (e) => {
 			e.preventDefault();
 
 			if (this.state.active) {
-				Action.graph.editNode(this.getText());
-				Action.graph.deselectNode();
+				actions.graph.editNode(this.getText());
+				actions.graph.deselectNode();
 				this.setText('');
 			}
 		});
@@ -64,7 +64,7 @@ var InputBox = React.createClass({
 
 	onSelectNode(id) {
 		if (id) {
-			this.setText(Store.mapdata.doc.snapshot.nodes[id].text);
+			this.setText(rt.graph.doc.snapshot.nodes[id].text);
 			this.setState({
 				active: true
 			});

@@ -35,19 +35,19 @@ var Tree = React.createClass({
 
 	componentWillReceiveProps: function(nextProps) {
 		if (_.isObject(nextProps.graph)) {
-			var processed = TreeSpread.run(nextProps.graph);
-			console.log('processed.nodes', processed.nodes);
-			this.setState({
-				nodes: processed.nodes,
-				edges: processed.edges
-			});
+ 			// if (nextProps.graph.edges.length == (_.size(nextProps.graph.nodes) - 1)) {
+				var processed = TreeSpread.run(nextProps.graph);
+				this.setState({
+					nodes: processed
+				});
+			// }
 		}
 	},
 
 	handleClick: function(e) {
 		e.preventDefault();
 		e.stopPropagation();
-		Action.graph.deselectNode();
+		actions.graph.deselectNode();
 	},
 
 	resize: function(ev) {
@@ -61,31 +61,21 @@ var Tree = React.createClass({
 	render: function() {
 		//todo fix all the rerendering on resize, clicking shit
 		//todo optimize node modifies to not recalc EVERYthing
-    	var nodes = this.state.nodes.map(function(v) {
+    	var nodes = _.map(this.state.nodes, (v, k) => {
     		return <Node
-	    		key={'node' + v.index}
+	    		key={'node' + k}
 	    		node={v}
-	    		selected={this.props.selected == v.id} />;
-    	}.bind(this));
+	    		id={k}
+	    		selected={this.props.selected == k} />;
+    	});
 
-    	var edgeElems = [];
-
-    	var edges = this.state.edges;
-
-    	for (var i = edges.length - 1; i >= 0; i--) {
-    		for (var j = edges[i].length - 1; j >= 0; j--) {
-	   			edgeElems.push(
-	   				<Edge
-	   					key={i + 'treeedge' + j}
-	   					text={edges[i][j].totalweight}
-	   					soft={edges[i][j].totalweight == 1}
-	   					x1={this.state.nodes[i].x}
-	   					y1={this.state.nodes[i].y}
-	   					x2={this.state.nodes[edges[i][j].next].x}
-	   					y2={this.state.nodes[edges[i][j].next].y} />
-	   				);
-    		};
-    	};
+    	var edges = _.map(this.props.graph.edges, (v, k) => {
+    		return (<Edge key={v.a + 'treeedge' + v.b}
+		    			x1={this.state.nodes[v.a].x}
+		    			y1={this.state.nodes[v.a].y}
+		    			x2={this.state.nodes[v.b].x}
+		    			y2={this.state.nodes[v.b].y} />);
+    	});
 
 		return (
 			<div styles={this.styles.nodeFrame} ref="nodeFrame" onClick={this.handleClick}>
@@ -95,7 +85,7 @@ var Tree = React.createClass({
 	        	<svg ref="edgePanFrame" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink"
 	     			version="1.2" baseProfile="tiny" width="100%" height="100%" x="0px" y="0px" viewBox={"0 0 " + this.state.framewidth + " " + this.state.frameheight}>
 	     			<g id="edgePanFrameG" width="100%" height="100%">
-	     			{edgeElems}
+	     			{edges}
 	     			</g>
 	     		</svg>
         	</div>

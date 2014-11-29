@@ -40,7 +40,7 @@ var InputBox = require('./controls/inputbox.jsx');
 var ChatFrame = require('./controls/chatbox.jsx');
 
 var GraphEditor = React.createClass({
-    mixins: [Reflux.connect(Store.mapdata, 'data'), ReactRouter.CurrentPath],
+    mixins: [Reflux.connect(rt.graph, 'data'), ReactRouter.CurrentPath],
 	v: 0,
 
 	getInitialState() {
@@ -54,13 +54,13 @@ var GraphEditor = React.createClass({
 
 		//Before
 		this.listenage = [];
-		this.listenage.push(Action.graph.selectNode.listen(this.onSelectNode));
-		this.listenage.push(Action.graph.deselectNode.listen(this.onDeselectNode));
-		this.listenage.push(Action.graph.editNode.listen(this.onEditNode));
+		this.listenage.push(actions.graph.selectNode.listen(this.onSelectNode));
+		this.listenage.push(actions.graph.deselectNode.listen(this.onDeselectNode));
+		this.listenage.push(actions.graph.editNode.listen(this.onEditNode));
 
 
 		console.log('this.props.params.id', this.props.params.id);
-		Store.mapdata.openMap(this.props.params.id);
+		rt.graph.openMap(this.props.params.id);
 	},
 
 	componentDidMount() {
@@ -73,26 +73,31 @@ var GraphEditor = React.createClass({
 			}
 
 			var id = this.createNode();
-			Action.graph.selectNode(id);
+			actions.graph.selectNode(id);
 		});
 
+		Mousetrap.bind(['del'], (e) => {
+			e.preventDefault();
 
-		Mousetrap.bind(['alt+shift+n', 'alt+shift+n'], function(e) {
+			if (!this.isSelectMode()) {
+				return false;
+			}
 
+			rt.graph.deleteNode(this.state.selected);
 		});
 
 	},
 
 	componentWillUnmount() {
 		console.log('componentWillUnmount');
-		Store.mapdata.closeMap();
+		rt.graph.closeMap();
 		_.map(this.listenage, (v, k) => { return v(); })
 	},
 
 
 	createNode() {
-		var id = Store.mapdata.nextId();
-		Store.mapdata.newNode(id, {text: ''}, {a: this.state.selected, b: id});
+		var id = rt.graph.nextId();
+		rt.graph.newNode(id, {text: ''}, {a: this.state.selected, b: id});
 		return id;
 	},
 
@@ -113,14 +118,14 @@ var GraphEditor = React.createClass({
 	},
 
 	onEditNode(text) {
-		Store.mapdata.updateNode(this.state.selected, {text: text});
-		Action.graph.selectNode();
+		rt.graph.updateNode(this.state.selected, {text: text});
+		actions.graph.selectNode();
 
-		//Store.mapdata.deleteNode(this.state.selected);
+		//rt.graph.deleteNode(this.state.selected);
 	},
 
     render () {
-    	if (Store.appdata.isLoggedin()) {
+    	if (api.auth.isLoggedin()) {
     		var controls = <EditInterface id={this.props.params.id} />
 		} else {
     		var controls = <ViewInterface id={this.props.params.id} />

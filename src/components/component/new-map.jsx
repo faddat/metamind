@@ -28,7 +28,7 @@ var NewMap = React.createClass({
 			loading: true
 		});
 
-		Store.maps.createMap(data).then((graph) => {
+		api.graph.createGraph(data).then((graph) => {
 			this.setState({
 				loading: false,
 				error: false

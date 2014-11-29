@@ -10,19 +10,22 @@ var Editor = require('../../index.jsx');
 var Node = React.createClass({
 
 	clickHandler: function(e) {
-		Action.graph.selectNode(this.props.node.id);
+		actions.graph.selectNode(this.props.id);
 		e.preventDefault();
 		e.stopPropagation();
 	},
 
 	render: function() {
-		var x = this.props.node.x + (window.innerWidth / 2) - 175;
-		var y =	this.props.node.y + (window.innerHeight / 2) - 44;
+		var x = Math.ceil(this.props.node.x + (window.innerWidth / 2) - 175);
+		var y =	Math.ceil(this.props.node.y + (window.innerHeight / 2) - 44);
+
+		var growth = 1 + Math.log(1 + this.props.node.totalDescendants) / 10;
+		// this.props.node.text = growth;
 
 		var transform = ReactStyle({
-			transform: 'translate3d('+x+'px, '+y+'px, 0) translate3d(-50%, -50%, 0)',
-			padding: 2 + Math.pow(this.props.node.weight/2, 0.5),
-			fontSize: 14 + Math.pow(this.props.node.weight/2, 0.5),
+			transform: 'translate3d('+x+'px, '+y+'px, 0) translate3d(-50%, -50%, 0) scale(' + growth + ', ' + growth + ') ',
+			// padding: '10, 2 + ',
+			// fontSize: 14 + Math.pow(this.props.node.weight/2, 0.5),
 		});
 
 
@@ -57,8 +60,8 @@ var Node = React.createClass({
 			boxSizing: 'border-box',
 			userSelect: 'none',
 			position: 'absolute',
-			padding: 5,
-			fontSize: '14pt',
+			padding: '2px 6px',
+			fontSize: 14,
 			textAlign: 'center',
 			borderRadius: 10,
 			minWidth: '1em',
@@ -70,13 +73,15 @@ var Node = React.createClass({
 			lineHeight: 20,
 			background: 'white',
 			color: '#222',
+			border: '1px solid #666666'
 		}),
 
 		soft: ReactStyle({
+			boxShadow: '0 1px 1px rgba(100, 100, 100, 0.7)',
 		}),
 
 		hard: ReactStyle({
-			boxShadow: '0 3px 3px rgba(100, 100, 100, 0.7)',
+			boxShadow: '0 1px 1px rgba(100, 100, 100, 0.7)',
 		}),
 
 		selected: ReactStyle({

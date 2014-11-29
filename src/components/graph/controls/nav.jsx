@@ -124,8 +124,8 @@ var GraphNav = React.createClass({
 	onClose() {
 		this.refs.help.toggle();
 
-		if (!Store.appdata.isHelpSeen()) {
-			Store.appdata.setHelpSeen();
+		if (!api.auth.isHelpSeen()) {
+			api.auth.setHelpSeen();
 		}
 	},
 
@@ -137,7 +137,7 @@ var GraphNav = React.createClass({
 				<Back />
 				<ShareBox shareURL={this.props.shareURL}/>
 
-				<MorphButton ref="help" text="?" onClick={this.helpToggle} style={morphButtonStyle} first={!Store.appdata.isHelpSeen()}>
+				<MorphButton ref="help" text="?" onClick={this.helpToggle} style={morphButtonStyle} first={!api.auth.isHelpSeen()}>
 					<Morph styles={[this.styles.readme]} onClose={this.onClose}>
 						<h2 styles={this.styles.h2}>Read Me</h2>
 						<ul styles={this.styles.ul}>
